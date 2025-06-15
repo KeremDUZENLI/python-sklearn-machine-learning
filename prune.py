@@ -3,41 +3,58 @@ from sklearn.model_selection   import train_test_split
 from sklearn.preprocessing     import LabelEncoder
 from sklearn.feature_selection import SelectKBest, f_classif
 
-# 1) Configuration
-DATA_PATH       = 'data/DATA_cluster3.csv'
-PVALUE_CUTOFF   = 0.05   # features with p-value > this are uninformative
-F_SCORE_CUTOFF  = 1.0    # features with F-score < this are very weak
+from config.config                import COLUMN_MAP
 
-# 2) Load and split
-def load_and_split(path):
-    df = pd.read_csv(path)
-    X  = df.drop(['elo', 'cluster'], axis=1)
-    y  = LabelEncoder().fit_transform(df['cluster'])
-    return train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
 
-# 3) Score features
-def score_features(X_tr, y_tr):
-    selector = SelectKBest(score_func=f_classif, k='all')
-    selector.fit(X_tr, y_tr)
-    return pd.DataFrame({
-        'feature': X_tr.columns,
-        'f_score': selector.scores_,
-        'p_value': selector.pvalues_
-    }).sort_values('f_score')
+DATA_PATH      = 'data/DATA_cluster3.csv'
+TEST_SIZE      = 0.2
+RANDOM_STATE   = 42
 
-# 4) Identify uninformative features
-def list_uninformative(df_scores, p_thresh, f_thresh):
-    mask = (df_scores['p_value'] > p_thresh) | (df_scores['f_score'] < f_thresh)
-    return df_scores[mask]
 
-# 5) Main
-X_tr, X_te, y_tr, y_te = load_and_split(DATA_PATH)
-scores = score_features(X_tr, y_tr)
+df = pd.read_csv(DATA_PATH)
+X = df.drop(['elo','cluster'], axis=1)
+y = LabelEncoder().fit_transform(df['cluster'])
+X_tr, X_te, y_tr, y_te = train_test_split(
+    X, y, test_size=TEST_SIZE, stratify=y, random_state=RANDOM_STATE
+)
 
-print("\nAll features scored (lowest F-score first):")
-print(scores.to_string(index=False))
+selector = SelectKBest(score_func=f_classif, k='all').fit(X_tr, y_tr)
+scores_df = pd.DataFrame({
+    'feature' : X_tr.columns,
+    'f_score' : selector.scores_,
+    'p_value' : selector.pvalues_,
+})
 
-uninfo = list_uninformative(scores, PVALUE_CUTOFF, F_SCORE_CUTOFF)
-print(f"\n\nFeatures with p-value > {PVALUE_CUTOFF} OR F-score < {F_SCORE_CUTOFF}:")
-for feat in uninfo['feature']:
-    print(f"  • {feat}")
+freq = X_tr.sum().rename('frequency')
+
+full_df = (
+    scores_df
+    .set_index('feature')
+    .join(freq)
+    .reindex(COLUMN_MAP) 
+    .dropna()
+    .reset_index()
+)
+
+# 5) Tidy print
+print("\nFeature  |  F-score   |  p-value   |  freq(1's in train)\n" + "-"*50)
+print(full_df.to_string(
+    index=False,
+    formatters={
+      'f_score'   : '{:8.2f}'.format,
+      'p_value'   : '{:8.3f}'.format,
+      'frequency' : '{:8d}'.format
+    }
+))
+
+# 6) Keep top‑k F‑scores
+k = 20
+selector_k = SelectKBest(f_classif, k=k).fit(X_tr, y_tr)
+mask_k     = selector_k.get_support()
+topk_feats = X_tr.columns[mask_k]
+
+print(f"\nTop {k} features by F-score:")
+print("-" * 40)
+for feat, score in zip(X_tr.columns[mask_k], selector_k.scores_[mask_k]):
+    print(f"  {feat:<40} {score:6.2f}")
+print()

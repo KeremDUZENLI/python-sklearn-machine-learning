@@ -2,13 +2,6 @@ import json
 import pandas as pd
 
 
-SOURCE = 'data/DATA.csv'
-OUTPUT = 'data/DATA_onehot.csv'
-PARSE_COLUMNS = [
-    'platform', 'device', 'technique', 'technique_sub',
-    'software_data', 'software_modeling', 'software_render'
-]
-
 STUDY_FOCUS_MAP = {
     'sf_restoration'    : 'Restoration',
     'sf_visualization'  : 'Visualization',
@@ -23,16 +16,20 @@ HISTORICAL_SITE_TYPE_MAP = {
 }
 
 HISTORICAL_SITE_TYPE_SUB_MAP = {
+    # Archaeological Site
     'hst_sub_landbased'  : 'LandBased',
     'hst_sub_underwater' : 'Underwater',
     
+    # Artistic Feature
     'hst_sub_architectural_asset' : 'ArchitecturalAsset',
     'hst_sub_artifact'            : 'Artifact',
     
+    # Building
     'hst_sub_fortification' : 'Fortification',
     'hst_sub_religious'     : 'Religious',
     'hst_sub_urbanspace'    : 'UrbanSpace',
     
+    # Natural Space
     'hst_sub_cave' : 'Cave',
 }
 
@@ -59,10 +56,12 @@ TECHNIQUE_MAP = {
 }
 
 TECHNIQUE_SUB_MAP = {
+    # 3D Scanning
     'tech_sub_laser_scanning'                  : 'Laser Scanning',
     'tech_sub_rgbd_imaging'                    : 'RGB-D Imaging',
     'tech_sub_volumetric_capture'              : 'Real-Time Volumetric Capture',
     
+    # Image-Based Techniques
     'tech_sub_photogrammetry'                  : 'Photogrammetry',
     'tech_sub_spherical'                       : 'Spherical Imaging',
     'tech_sub_ibm'                             : 'Image-Based Modelling (IBM)',
@@ -70,12 +69,14 @@ TECHNIQUE_SUB_MAP = {
     'tech_sub_uav'                             : 'UAV Aerial Imaging',
     'tech_sub_mvs'                             : 'Multi-View Stereo (MVS)',
     
+    # Geospatial Techniques
     'tech_sub_gis'                             : 'Geographic Information System (GIS)',
     'tech_sub_gnss'                            : 'Global Navigation Satellite System (GNSS)',
     'tech_sub_dem'                             : 'Digital Elevation Models (DEM)',
     'tech_sub_slam'                            : 'Visual-Inertial SLAM',
     'tech_sub_beacon_localization'             : 'Beacon Localization',
     
+    # Modeling & Reconstruction
     'tech_sub_3d'                              : '3D Modeling',
     'tech_sub_bim'                             : 'BIM (Building Information Modeling)',
     'tech_sub_hbim'                            : 'HBIM (Historical Building Information Modeling)',
@@ -83,6 +84,7 @@ TECHNIQUE_SUB_MAP = {
     'tech_sub_anastylosis'                     : 'Virtual Anastylosis',
     'tech_sub_adi'                             : 'Archaeological Data Integration',
     
+    # Data Processing
     'tech_sub_semantic_data_extraction'        : 'Semantic Data Extraction',
     'tech_sub_3d_texturing'                    : '3D Texturing',
     'tech_sub_texture_mapping'                 : 'Texture Mapping',
@@ -154,6 +156,14 @@ SOFTWARE_RENDER_MAP = {
     'sr_world_creator_2'  : 'World Creator 2',
 }
 
+
+SOURCE = 'data/DATA.csv'
+OUTPUT = 'data/DATA_onehot.csv'
+PARSE_COLUMNS = [
+    'platform', 'device', 'technique', 'technique_sub',
+    'software_data', 'software_modeling', 'software_render'
+]
+
 def parse_json(cell):
     try:
         parsed = json.loads(cell)
@@ -170,84 +180,96 @@ def load_csv(path):
             df[col] = df[col].fillna('[]').apply(parse_json)
     return df
 
-def onehot_study_focus(df):
-    for flag_col, value in STUDY_FOCUS_MAP.items():
-        df[flag_col] = df['study_focus'].apply(lambda x: int(x == value))
-    return df
+def onehot(df, column, mapping, is_list=True):
+    flags = {}
+    for flag_col, target in mapping.items():
+        if is_list:
+            flags[flag_col] = df[column].apply(lambda lst: int(target in lst))
+        else:
+            flags[flag_col] = df[column].apply(lambda x: int(x == target))
 
-def onehot_historical_site_type(df):
-    for flag_col, value in HISTORICAL_SITE_TYPE_MAP.items():
-        df[flag_col] = df['historical_site_type'].apply(lambda x: int(x == value))
-    return df
+    return pd.concat([df, pd.DataFrame(flags, index=df.index)], axis=1)
 
-def onehot_historical_site_type_sub(df):
-    for flag_col, value in HISTORICAL_SITE_TYPE_SUB_MAP.items():
-        df[flag_col] = df['historical_site_type_sub'].apply(lambda x: int(x == value))
-    return df
-
-def onehot_platform(df):
-    for flag_col, value in PLATFORM_MAP.items():
-        df[flag_col] = df['platform'].apply(lambda lst: int(value in lst))
-    return df
-
-def onehot_device(df):
-    for flag_col, value in DEVICE_MAP.items():
-        df[flag_col] = df['device'].apply(lambda lst: int(value in lst))
-    return df
-
-def onehot_technique(df):
-    for flag_col, value in TECHNIQUE_MAP.items():
-        df[flag_col] = df['technique'].apply(lambda lst: int(value in lst))
-    return df
-
-def onehot_technique_sub(df):
-    for flag_col, value in TECHNIQUE_SUB_MAP.items():
-        df[flag_col] = df['technique_sub'].apply(lambda lst: int(value in lst))
-    return df
-
-def onehot_software_data(df):
-    for flag_col, value in SOFTWARE_DATA_MAP.items():
-        df[flag_col] = df['software_data'].apply(lambda lst: int(value in lst))
-    return df
-
-def onehot_software_modeling(df):
-    for flag_col, value in SOFTWARE_MODELING_MAP.items():
-        df[flag_col] = df['software_modeling'].apply(lambda lst: int(value in lst))
-    return df
-
-def onehot_software_render(df):
-    for flag_col, value in SOFTWARE_RENDER_MAP.items():
-        df[flag_col] = df['software_render'].apply(lambda lst: int(value in lst))
-    return df
-
-def reorder(df):
-    # head                     = ['id', 'order', 'year', 'country']
-    study_focus              = list(STUDY_FOCUS_MAP.keys())
-    historical_site_type     = list(HISTORICAL_SITE_TYPE_MAP.keys())
-    historical_site_type_sub = list(HISTORICAL_SITE_TYPE_SUB_MAP.keys())
-    platform                 = list(PLATFORM_MAP.keys())
-    device                   = list(DEVICE_MAP.keys())
-    technique                = list(TECHNIQUE_MAP.keys())
-    technique_sub            = list(TECHNIQUE_SUB_MAP.keys())
-    software_data            = list(SOFTWARE_DATA_MAP.keys())
-    software_modeling        = list(SOFTWARE_MODELING_MAP.keys())
-    software_render          = list(SOFTWARE_RENDER_MAP.keys())
+def organise_columns(df):
+    head                         = ['id', 'order', 'year', 'country']
     
-    all_cols = study_focus + historical_site_type + historical_site_type_sub + platform + device + technique + technique_sub + software_data + software_modeling + software_render
+    study_focus                  = ['study_focus']
+    study_focus_map              = list(STUDY_FOCUS_MAP.keys())
+    
+    historical_site_type         = ['historical_site_type']
+    historical_site_type_map     = list(HISTORICAL_SITE_TYPE_MAP.keys())
+    
+    historical_site_type_sub     = ['historical_site_type_sub']
+    historical_site_type_sub_map = list(HISTORICAL_SITE_TYPE_SUB_MAP.keys())
+    
+    platform                     = ['platform']
+    platform_map                 = list(PLATFORM_MAP.keys())
+    
+    device                       = ['device']
+    device_map                   = list(DEVICE_MAP.keys())
+    
+    technique                    = ['technique']
+    technique_map                = list(TECHNIQUE_MAP.keys())
+    
+    technique_sub                = ['technique_sub']
+    technique_sub_map            = list(TECHNIQUE_SUB_MAP.keys())
+    
+    software_data                = ['software_data']
+    software_data_map            = list(SOFTWARE_DATA_MAP.keys())
+    
+    software_modeling            = ['software_modeling']
+    software_modeling_map        = list(SOFTWARE_MODELING_MAP.keys())
+    
+    software_render              = ['software_render']
+    software_render_map          = list(SOFTWARE_RENDER_MAP.keys())
+    
+    all_cols = (
+        # head + 
+        
+        # study_focus + 
+        study_focus_map +
+        
+        # historical_site_type + 
+        historical_site_type_map + 
+        
+        # historical_site_type_sub + 
+        historical_site_type_sub_map + 
+        
+        # platform + 
+        platform_map + 
+        
+        # device + 
+        device_map +
+        
+        # technique + 
+        technique_map + 
+        
+        # technique_sub + 
+        technique_sub_map +
+        
+        # software_data + 
+        software_data_map +
+        
+        # software_modeling + 
+        software_modeling_map + 
+        
+        # software_render
+        software_render_map
+    )
     return df[[c for c in all_cols if c in df.columns]]
 
 
 df = load_csv(SOURCE)
-df = onehot_study_focus(df)
-df = onehot_historical_site_type(df)
-df = onehot_historical_site_type_sub(df)
-df = onehot_platform(df)
-df = onehot_device(df)
-df = onehot_technique(df)
-df = onehot_technique_sub(df)
-df = onehot_software_data(df)
-df = onehot_software_modeling(df)
-df = onehot_software_render(df)
-df_final = reorder(df)
+df = onehot(df, 'study_focus'              , STUDY_FOCUS_MAP              , False)
+df = onehot(df, 'historical_site_type'     , HISTORICAL_SITE_TYPE_MAP     , False)
+df = onehot(df, 'historical_site_type_sub' , HISTORICAL_SITE_TYPE_SUB_MAP , False)
+df = onehot(df, 'platform'                 , PLATFORM_MAP)
+df = onehot(df, 'device'                   , DEVICE_MAP)
+df = onehot(df, 'technique'                , TECHNIQUE_MAP)
+df = onehot(df, 'technique_sub'            , TECHNIQUE_SUB_MAP)
+df = onehot(df, 'software_data'            , SOFTWARE_DATA_MAP)
+df = onehot(df, 'software_modeling'        , SOFTWARE_MODELING_MAP)
+df = onehot(df, 'software_render'          , SOFTWARE_RENDER_MAP)
+df_final = organise_columns(df)
 
 df_final.to_csv(OUTPUT, index=False, encoding='utf-8')

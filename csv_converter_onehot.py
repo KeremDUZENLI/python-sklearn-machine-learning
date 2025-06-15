@@ -9,6 +9,151 @@ PARSE_COLUMNS = [
     'software_data', 'software_modeling', 'software_render'
 ]
 
+STUDY_FOCUS_MAP = {
+    'sf_restoration'    : 'Restoration',
+    'sf_visualization'  : 'Visualization',
+    'sf_reconstruction' : 'Reconstruction',
+}
+
+HISTORICAL_SITE_TYPE_MAP = {
+    'hst_archaeological_site' : 'Archaeological Site',
+    'hst_artistic_feature'    : 'Artistic Feature',
+    'hst_building'            : 'Building',
+    'hst_natural_space'       : 'Natural Space',
+}
+
+HISTORICAL_SITE_TYPE_SUB_MAP = {
+    'hst_sub_landbased'  : 'LandBased',
+    'hst_sub_underwater' : 'Underwater',
+    
+    'hst_sub_architectural_asset' : 'ArchitecturalAsset',
+    'hst_sub_artifact'            : 'Artifact',
+    
+    'hst_sub_fortification' : 'Fortification',
+    'hst_sub_religious'     : 'Religious',
+    'hst_sub_urbanspace'    : 'UrbanSpace',
+    
+    'hst_sub_cave' : 'Cave',
+}
+
+PLATFORM_MAP = {
+    'platform_vr' : 'VR',
+    'platform_ar' : 'AR',
+    'platform_mr' : 'MR',
+    'platform_xr' : 'XR',
+}
+
+DEVICE_MAP = {
+    'device_hmd'               : 'HMD',
+    'device_pc'                : 'PC',
+    'device_mobile'            : 'Mobile',
+    'device_immersive_display' : 'Immersive Display',
+}
+
+TECHNIQUE_MAP = {
+    'tech_3d_scanning'     : '3D Scanning',
+    'tech_image_based'     : 'Image-Based Techniques',
+    'tech_geospatial'      : 'Geospatial Techniques',
+    'tech_modeling'        : 'Modeling & Reconstruction',
+    'tech_data_processing' : 'Data Processing'
+}
+
+TECHNIQUE_SUB_MAP = {
+    'tech_sub_laser_scanning'                  : 'Laser Scanning',
+    'tech_sub_rgbd_imaging'                    : 'RGB-D Imaging',
+    'tech_sub_volumetric_capture'              : 'Real-Time Volumetric Capture',
+    
+    'tech_sub_photogrammetry'                  : 'Photogrammetry',
+    'tech_sub_spherical'                       : 'Spherical Imaging',
+    'tech_sub_ibm'                             : 'Image-Based Modelling (IBM)',
+    'tech_sub_sfm'                             : 'Structure from Motion (SfM)',
+    'tech_sub_uav'                             : 'UAV Aerial Imaging',
+    'tech_sub_mvs'                             : 'Multi-View Stereo (MVS)',
+    
+    'tech_sub_gis'                             : 'Geographic Information System (GIS)',
+    'tech_sub_gnss'                            : 'Global Navigation Satellite System (GNSS)',
+    'tech_sub_dem'                             : 'Digital Elevation Models (DEM)',
+    'tech_sub_slam'                            : 'Visual-Inertial SLAM',
+    'tech_sub_beacon_localization'             : 'Beacon Localization',
+    
+    'tech_sub_3d'                              : '3D Modeling',
+    'tech_sub_bim'                             : 'BIM (Building Information Modeling)',
+    'tech_sub_hbim'                            : 'HBIM (Historical Building Information Modeling)',
+    'tech_sub_sm'                              : 'Stratigraphic Mapping',
+    'tech_sub_anastylosis'                     : 'Virtual Anastylosis',
+    'tech_sub_adi'                             : 'Archaeological Data Integration',
+    
+    'tech_sub_semantic_data_extraction'        : 'Semantic Data Extraction',
+    'tech_sub_3d_texturing'                    : '3D Texturing',
+    'tech_sub_texture_mapping'                 : 'Texture Mapping',
+    'tech_sub_rbm'                             : 'Range-Based Modeling (RBM)',
+    'tech_sub_hdr_imaging'                     : 'HDR Imaging',
+    'tech_sub_archaeological_interpretation'   : 'Archaeological Interpretation',
+}
+
+SOFTWARE_DATA_MAP = {
+    'sd_autodesk_recap'        : 'Autodesk ReCap',
+    'sd_autodesk_mudbox'       : 'Autodesk Mudbox',
+    'sd_agisoft_metashape'     : 'Agisoft Metashape',
+    'sd_reality_capture'       : 'Reality Capture',
+    'sd_context_capture'       : 'Context Capture',
+    'sd_pix4d_capture'         : 'PIX4D Capture',
+    'sd_leica_cyclone'         : 'Leica Cyclone',
+    'sd_dstretch'              : 'Dstretch',
+    'sd_arcgis'                : 'ArcGIS',
+    'sd_faro_scene'            : 'Faro Scene',
+    'sd_focus_scene'           : 'Focus Scene',
+    'sd_processing'            : 'Processing',
+    'sd_australis_photometric' : 'Australis Photometric',
+    'sd_affinity'              : 'Affinity',
+    'sd_polycam'               : 'Polycam',
+    'sd_graphos'               : 'GRAPHOS',
+    'sd_catia'                 : 'CATIA',
+    'sd_qgis'                  : 'QGIS',
+    'sd_mysql'                 : 'MySQL',
+}
+
+SOFTWARE_MODELING_MAP = {
+    'sm_autodesk_autocad' : 'Autodesk AutoCAD',
+    'sm_autodesk_3ds_max' : 'Autodesk 3ds Max',
+    'sm_autodesk_maya'    : 'Autodesk Maya',
+    'sm_autodesk_revit'   : 'Autodesk Revit',
+    'sm_autodesk_remake'  : 'Autodesk Remake',
+    'sm_sketchup'         : 'SketchUp',
+    'sm_rhinoceros'       : 'Rhinoceros',
+    'sm_blender'          : 'Blender',
+    'sm_archicad'         : 'ArchiCAD',
+    'sm_maxon_cinema4d'   : 'Maxon Cinema4D',
+    'sm_zbrush'           : 'ZBrush',
+    'sm_meshlab'          : 'Meshlab',
+    'sm_meshmixer'        : 'Meshmixer',
+    'sm_ramsete'          : 'Ramsete',
+    'sm_simlab'           : 'SIMLAB',
+}
+
+SOFTWARE_RENDER_MAP = {
+    'sr_unity'            : 'Unity',
+    'sr_unreal_engine'    : 'Unreal Engine',
+    'sr_vray'             : 'V-Ray',
+    'sr_lumion'           : 'Lumion',
+    'sr_enscape'          : 'Enscape',
+    'sr_twinmotion'       : 'Twinmotion',
+    'sr_sketchfab'        : 'Sketchfab',
+    'sr_maxwhere'         : 'MaxWhere',
+    'sr_vuforia'          : 'Vuforia',
+    'sr_gimp'             : 'Gimp',
+    'sr_easyar'           : 'EasyAR',
+    'sr_pano2vr'          : 'Pano2VR',
+    'sr_augment'          : 'Augment',
+    'sr_three_js'         : 'Three.js',
+    'sr_middlevr'         : 'MiddleVR',
+    'sr_renderman'        : 'RenderMan',
+    'sr_shapespark'       : 'Shapespark',
+    'sr_fb360_encoder'    : 'FB360 Encoder',
+    'sr_kolor_panotour'   : 'Kolor Panotour',
+    'sr_world_creator_2'  : 'World Creator 2',
+}
+
 def parse_json(cell):
     try:
         parsed = json.loads(cell)
@@ -26,150 +171,69 @@ def load_csv(path):
     return df
 
 def onehot_study_focus(df):
-    flag_map = {
-        'study_focus_restoration'    : 'Restoration',
-        'study_focus_visualization'  : 'Visualization',
-        'study_focus_reconstruction' : 'Reconstruction',
-    }
-    for flag_col, value in flag_map.items():
+    for flag_col, value in STUDY_FOCUS_MAP.items():
         df[flag_col] = df['study_focus'].apply(lambda x: int(x == value))
     return df
 
 def onehot_historical_site_type(df):
-    flag_map = {
-        'historical_site_type_archaeological_site' : 'Archaeological Site',
-        'historical_site_type_artistic_feature'    : 'Artistic Feature',
-        'historical_site_type_building'            : 'Building',
-        'historical_site_type_natural_space'       : 'Natural Space',
-    }
-    for flag_col, value in flag_map.items():
+    for flag_col, value in HISTORICAL_SITE_TYPE_MAP.items():
         df[flag_col] = df['historical_site_type'].apply(lambda x: int(x == value))
     return df
 
 def onehot_historical_site_type_sub(df):
-    flag_map = {
-        'hst_sub_landbased'    : 'LandBased',
-        'hst_sub_underwater'   : 'Underwater',
-        
-        'hst_sub_architectural_asset' : 'ArchitecturalAsset',
-        'hst_sub_artifact'            : 'Artifact',
-        
-        'hst_sub_fortification' : 'Fortification',
-        'hst_sub_religious'     : 'Religious',
-        'hst_sub_urbanspace'    : 'UrbanSpace',
-        
-        'hst_sub_cave'          : 'Cave',
-    }
-    for flag_col, value in flag_map.items():
+    for flag_col, value in HISTORICAL_SITE_TYPE_SUB_MAP.items():
         df[flag_col] = df['historical_site_type_sub'].apply(lambda x: int(x == value))
     return df
 
-
 def onehot_platform(df):
-    flag_map = {
-        'platform_vr' : 'VR',
-        'platform_ar' : 'AR',
-        'platform_mr' : 'MR',
-        'platform_xr' : 'XR',
-    }
-    for flag_col, value in flag_map.items():
+    for flag_col, value in PLATFORM_MAP.items():
         df[flag_col] = df['platform'].apply(lambda lst: int(value in lst))
     return df
 
 def onehot_device(df):
-    flag_map = {
-        'device_hmd'               : 'HMD',
-        'device_pc'                : 'PC',
-        'device_mobile'            : 'Mobile',
-        'device_immersive_display' : 'Immersive Display',
-    }
-    for flag_col, value in flag_map.items():
+    for flag_col, value in DEVICE_MAP.items():
         df[flag_col] = df['device'].apply(lambda lst: int(value in lst))
     return df
 
 def onehot_technique(df):
-    flag_map = {
-        'tech_3d_scanning'            : '3D Scanning',
-        'tech_image_based_techniques' : 'Image-Based Techniques',
-        'tech_geospatial_techniques'  : 'Geospatial Techniques',
-        'tech_modeling'               : 'Modeling & Reconstruction',
-        'tech_data_processing'        : 'Data Processing'
-    }
-    for flag_col, value in flag_map.items():
+    for flag_col, value in TECHNIQUE_MAP.items():
         df[flag_col] = df['technique'].apply(lambda lst: int(value in lst))
     return df
 
 def onehot_technique_sub(df):
-    subgroup_map = {
-        'sub_3d_scanning': {
-            'Laser Scanning', 
-            'RGB-D Imaging', 
-            'Real-Time Volumetric Capture'
-        },
-        'sub_image_based_techniques': {
-            'Photogrammetry', 
-            'Spherical Imaging', 
-            'Image-Based Modelling (IBM)',
-            'Structure from Motion (SfM)', 
-            'UAV Aerial Imaging', 
-            'Multi-View Stereo (MVS)'
-        },
-        'sub_geospatial_techniques': {
-            'Geographic Information System (GIS)', 
-            'Global Navigation Satellite System (GNSS)',
-            'Digital Elevation Models (DEM)', 
-            'Visual-Inertial SLAM', 
-            'Beacon Localization'
-        },
-        'sub_modeling': {
-            '3D Modeling', 
-            'BIM (Building Information Modeling)',
-            'HBIM (Historical Building Information Modeling)', 
-            'Archaeological Data Integration',
-            'Stratigraphic Mapping', 
-            'Virtual Anastylosis'
-        },
-        'sub_data_processing': {
-            'Semantic Data Extraction', 
-            '3D Texturing',
-            'Texture Mapping', 
-            'Range-Based Modeling (RBM)', 
-            'HDR Imaging'
-        }
-    }
-    for newcol in subgroup_map:
-        df[newcol] = 0
-    for idx, subs in df['technique_sub'].items():
-        for newcol, members in subgroup_map.items():
-            if set(subs) & members:
-                df.at[idx, newcol] = 1
+    for flag_col, value in TECHNIQUE_SUB_MAP.items():
+        df[flag_col] = df['technique_sub'].apply(lambda lst: int(value in lst))
     return df
 
-def onehot_software(df):
-    flag_map = {
-        'software_data'     : 'software_data',
-        'software_modeling' : 'software_modeling',
-        'software_render'   : 'software_render',
-    }
-    for flag_col, source_col in flag_map.items():
-        df[flag_col] = df[source_col].apply(lambda lst: int(bool(lst)))
+def onehot_software_data(df):
+    for flag_col, value in SOFTWARE_DATA_MAP.items():
+        df[flag_col] = df['software_data'].apply(lambda lst: int(value in lst))
+    return df
+
+def onehot_software_modeling(df):
+    for flag_col, value in SOFTWARE_MODELING_MAP.items():
+        df[flag_col] = df['software_modeling'].apply(lambda lst: int(value in lst))
+    return df
+
+def onehot_software_render(df):
+    for flag_col, value in SOFTWARE_RENDER_MAP.items():
+        df[flag_col] = df['software_render'].apply(lambda lst: int(value in lst))
     return df
 
 def reorder(df):
     # head                     = ['id', 'order', 'year', 'country']
-    study_focus              = ['study_focus_restoration', 'study_focus_visualization', 'study_focus_reconstruction']
-    historical_site_type     = ['historical_site_type_archaeological_site', 'historical_site_type_artistic_feature', 'historical_site_type_building', 'historical_site_type_natural_space']
-    historical_site_type_sub = ['hst_sub_landbased', 'hst_sub_underwater', 'hst_sub_architectural_asset', 'hst_sub_artifact', 'hst_sub_fortification', 'hst_sub_religious', 'hst_sub_urbanspace', 'hst_sub_cave']
-    platform                 = ['platform_vr', 'platform_ar', 'platform_mr', 'platform_xr']
-    device                   = ['device_hmd', 'device_pc', 'device_mobile', 'device_immersive_display']
-    technique                = ['tech_3d_scanning', 'tech_image_based_techniques', 'tech_geospatial_techniques', 'tech_modeling', 'tech_data_processing']
-    technique_sub            = ['sub_3d_scanning', 'sub_image_based_techniques', 'sub_geospatial_techniques', 'sub_modeling', 'sub_data_processing']
-    # software_data = 
-    # software_modeling = 
-    # software_render = 
-    software                 = ['software_data', 'software_modeling', 'software_render']
+    study_focus              = list(STUDY_FOCUS_MAP.keys())
+    historical_site_type     = list(HISTORICAL_SITE_TYPE_MAP.keys())
+    historical_site_type_sub = list(HISTORICAL_SITE_TYPE_SUB_MAP.keys())
+    platform                 = list(PLATFORM_MAP.keys())
+    device                   = list(DEVICE_MAP.keys())
+    technique                = list(TECHNIQUE_MAP.keys())
+    technique_sub            = list(TECHNIQUE_SUB_MAP.keys())
+    software_data            = list(SOFTWARE_DATA_MAP.keys())
+    software_modeling        = list(SOFTWARE_MODELING_MAP.keys())
+    software_render          = list(SOFTWARE_RENDER_MAP.keys())
     
-    all_cols = study_focus + historical_site_type + historical_site_type_sub + platform + device + technique + technique_sub + software
+    all_cols = study_focus + historical_site_type + historical_site_type_sub + platform + device + technique + technique_sub + software_data + software_modeling + software_render
     return df[[c for c in all_cols if c in df.columns]]
 
 
@@ -181,7 +245,9 @@ df = onehot_platform(df)
 df = onehot_device(df)
 df = onehot_technique(df)
 df = onehot_technique_sub(df)
-df = onehot_software(df)
+df = onehot_software_data(df)
+df = onehot_software_modeling(df)
+df = onehot_software_render(df)
 df_final = reorder(df)
 
 df_final.to_csv(OUTPUT, index=False, encoding='utf-8')

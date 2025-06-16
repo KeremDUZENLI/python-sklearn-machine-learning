@@ -2,16 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 
-RANDOM_STATE = 42
 
-
-def plot_kmeans(path_output, elos, k_max):
+def plot_kmeans(path_output, elos, k_max, random_state):
     X = np.array(elos).reshape(-1, 1)
     inertias = []
 
     k_values = list(range(1, k_max + 1))
     for k in k_values:
-        k_mean = _get_kmeans(k).fit(X)
+        k_mean = _get_kmeans(k, random_state).fit(X)
         inertias.append(k_mean.inertia_)
 
     plt.figure(figsize=(8, 4))
@@ -24,12 +22,12 @@ def plot_kmeans(path_output, elos, k_max):
     plt.savefig(path_output)
 
 
-def create_csv_clustered(df, path_output_prefix, elos, k_min, k_max):
+def create_csv_clustered(df, path_output_prefix, elos, k_min, k_max, random_state):
     df = _add_column_elo(df, elos)
     
     k_values = list(range(k_min, k_max + 1))
     for k in k_values:
-        df_clustered = _add_column_cluster(df, k)
+        df_clustered = _add_column_cluster(df, k, random_state)
         _print_summary_cluster(df_clustered, k)
         _save_csv_clustered(df_clustered, k, path_output_prefix)
 
@@ -43,8 +41,8 @@ def _add_column_elo(df, elos):
     return df
 
 
-def _add_column_cluster(df, k):
-    km = _get_kmeans(k)
+def _add_column_cluster(df, k, random_state):
+    km = _get_kmeans(k, random_state)
     km.fit(df[['elo']])
     labels = km.labels_
 
@@ -57,8 +55,8 @@ def _add_column_cluster(df, k):
     return df
 
 
-def _get_kmeans(k):
-    return KMeans(n_clusters=k, random_state=RANDOM_STATE)
+def _get_kmeans(k, random_state):
+    return KMeans(n_clusters=k, random_state=random_state)
 
 
 def _print_summary_cluster(df, k):

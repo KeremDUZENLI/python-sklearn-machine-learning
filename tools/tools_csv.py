@@ -12,7 +12,8 @@ def create_csv(path_output, header, rows):
 
 
 def read_csv(path_input, columns_metadata=None):
-    df = pd.read_csv(path_input, dtype=str)
+    df = pd.read_csv(path_input)
+
     if columns_metadata:
         for column, (_, is_list) in columns_metadata.items():
             if is_list and column in df.columns:

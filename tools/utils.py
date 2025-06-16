@@ -33,4 +33,4 @@ def _print_table(title, rows):
     print('─' * 100)
 
     for label, count, percent in rows:
-        print(f"{label:<{label_width}} |  {count:<{count_width}d} | {percent:<{percent_width}.2f}")
+        print(f"{label:<{label_width}} |  {count:<{count_width}.0f} | {percent:<{percent_width}.2f}")

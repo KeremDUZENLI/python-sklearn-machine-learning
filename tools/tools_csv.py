@@ -10,6 +10,7 @@ def create_csv(path_output, header, rows):
             serialized_row = [_serialize(cell) for cell in row]
             writer.writerow(serialized_row)
 
+
 def read_csv(path_input, columns_metadata=None):
     df = pd.read_csv(path_input, dtype=str)
     if columns_metadata:
@@ -18,8 +19,10 @@ def read_csv(path_input, columns_metadata=None):
                 df[column] = df[column].fillna('[]').apply(_parse)
     return df
 
+
 def _serialize(cell):
     return json.dumps(cell, ensure_ascii=False) if isinstance(cell, list) else cell
+
 
 def _parse(cell):
     try:

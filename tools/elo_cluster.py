@@ -1,8 +1,33 @@
+import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 
- 
-def create_csv_clustered(df, path_output_prefix, elos, k_values):
+RANDOM_STATE = 42
+
+
+def plot_kmeans(path_output, elos, k_max):
+    X = np.array(elos).reshape(-1, 1)
+    inertias = []
+
+    k_values = list(range(1, k_max + 1))
+    for k in k_values:
+        k_mean = _get_kmeans(k).fit(X)
+        inertias.append(k_mean.inertia_)
+
+    plt.figure(figsize=(8, 4))
+    plt.plot(k_values, inertias, marker='o')
+    plt.xticks(k_values)
+    plt.xlabel('Number of Clusters (k)')
+    plt.ylabel('Inertia')
+    plt.title('Elbow Method for Optimal Number of Clusters')
+    plt.tight_layout()
+    plt.savefig(path_output)
+
+
+def create_csv_clustered(df, path_output_prefix, elos, k_min, k_max):
     df = _add_column_elo(df, elos)
+    
+    k_values = list(range(k_min, k_max + 1))
     for k in k_values:
         df_clustered = _add_column_cluster(df, k)
         _print_summary_cluster(df_clustered, k)
@@ -19,7 +44,7 @@ def _add_column_elo(df, elos):
 
 
 def _add_column_cluster(df, k):
-    km = KMeans(n_clusters=k, random_state=42)
+    km = _get_kmeans(k)
     km.fit(df[['elo']])
     labels = km.labels_
 
@@ -30,6 +55,10 @@ def _add_column_cluster(df, k):
     df = df.copy()
     df['cluster'] = [f"cluster_{remap[label]}" for label in labels]
     return df
+
+
+def _get_kmeans(k):
+    return KMeans(n_clusters=k, random_state=RANDOM_STATE)
 
 
 def _print_summary_cluster(df, k):

@@ -1,3 +1,11 @@
+HEADER = [
+    'id', 'order', 'year', 'country', 
+    'study_focus', 'historical_site_type', 'historical_site_type_sub', 
+    'platform', 'device', 'technique', 'technique_sub', 
+    'software_data', 'software_modeling', 'software_render',
+    'elo', 'cluster'
+]
+
 STUDY_FOCUS_MAP = {
     'sf_restoration'    : 'Restoration',
     'sf_visualization'  : 'Visualization',
@@ -152,8 +160,8 @@ SOFTWARE_RENDER_MAP = {
     'sr_world_creator_2'  : 'World Creator 2',
 }
 
-COLUMN_MAP = [
-    # 'id', 'order', 'year', 'country',
+COLUMNS_ONEHOT = [
+    # *HEADER[:4],
 
     # 'study_focus',
     *STUDY_FOCUS_MAP.keys(),
@@ -185,3 +193,16 @@ COLUMN_MAP = [
     # 'software_render',
     *SOFTWARE_RENDER_MAP.keys(),
 ]
+
+COLUMNS_METADATA = {
+    'study_focus'              : (STUDY_FOCUS_MAP,              False),
+    'historical_site_type'     : (HISTORICAL_SITE_TYPE_MAP,     False),
+    'historical_site_type_sub' : (HISTORICAL_SITE_TYPE_SUB_MAP, False),
+    'platform'                 : (PLATFORM_MAP,                 True),
+    'device'                   : (DEVICE_MAP,                   True),
+    'technique'                : (TECHNIQUE_MAP,                True),
+    'technique_sub'            : (TECHNIQUE_SUB_MAP,            True),
+    'software_data'            : (SOFTWARE_DATA_MAP,            True),
+    'software_modeling'        : (SOFTWARE_MODELING_MAP,        True),
+    'software_render'          : (SOFTWARE_RENDER_MAP,          True),
+}

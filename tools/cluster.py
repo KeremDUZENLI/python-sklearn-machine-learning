@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.cluster import KMeans
-from data.DATA import ELOS
+from data._DATA_ import ELOS
 
 
 K_MIN  = 3

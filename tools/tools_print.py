@@ -29,7 +29,7 @@ def print_summary(df, columns_metadata=None):
             _print_table(group_name, header, rows)
 
 
-def print_summary_cluster(df, k):
+def print_summary_cluster(df, k=None):
     print(f"\n=== cluster_{k} ===")
     summary = df.groupby('cluster')['elo'].agg(['min', 'max', 'count'])
     
@@ -50,14 +50,10 @@ def print_df_scores(df, columns_group=None, top_n=None):
     print(f"\n\n\n======================== {session} ========================", end="")
 
     if not columns_group:
-        rows = []
-        for _, r in working.iterrows():
-            rows.append((
-                r['feature'],
-                f"{r['f_score']:.2f}",
-                f"{r['p_value']:.3f}",
-                int(r['frequency'])
-            ))
+        rows = _get_score_rows(
+            working,
+            ["feature", "f_score", "p_value", "frequency"]
+        )
         _print_table("", header, rows)
         return
 
@@ -77,7 +73,7 @@ def print_df_scores(df, columns_group=None, top_n=None):
     
 
 def print_df_scores_group(df, columns_group=None, top_n=None):
-    header = ["Feature", "F-score Mean", "Elements"]
+    header = ["Feature", "F-score", "P-value", "Frequency"]
 
     if top_n:
         session = f"Top {top_n} groups by mean F-score"
@@ -89,23 +85,16 @@ def print_df_scores_group(df, columns_group=None, top_n=None):
 
     rows = []
     if not columns_group:
-        for _, r in working.iterrows():
-            rows.append((
-                r['feature'],
-                f"{r['f_score_mean']:.2f}",
-                str(int(r['elements']))
-            ))
+        rows = _get_score_rows(
+            working,
+            ["feature", "f_score_mean", "p_value_mean", "frequency_total"]
+        )
     else:
-        for group_name in columns_group:
-            sub = working[working['feature'] == group_name]
-            if not sub.empty:
-                mean_score  = sub.iloc[0]['f_score_mean']
-                count_feats = int(sub.iloc[0]['elements'])
-                rows.append((
-                    group_name,
-                    f"{mean_score:.2f}",
-                    str(count_feats)
-                ))
+        subset = working[working['feature'].isin(columns_group)]
+        rows = _get_score_rows(
+            subset,
+            ["feature", "f_score_mean", "p_value_mean", "frequency_total"]
+        )
 
     _print_table("", header, rows)
 
@@ -145,6 +134,25 @@ def _get_summary_rows(df, label_map=None, column=None, is_list=False, binary_col
             percent = round(count / total * 100, 2)
             rows.append((label, count, percent))
 
+    return rows
+
+
+def _get_score_rows(df, columns):
+    rows = []
+    for _, r in df.iterrows():
+        row = []
+        for col in columns:
+            val = r[col]
+            if isinstance(val, float):
+                if "p_value" in col:
+                    row.append(f"{val:.3f}")
+                else:
+                    row.append(f"{val:.2f}")
+            elif isinstance(val, int):
+                row.append(str(val))
+            else:
+                row.append(str(val))
+        rows.append(tuple(row))
     return rows
 
 

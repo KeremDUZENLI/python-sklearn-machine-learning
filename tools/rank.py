@@ -41,13 +41,19 @@ def rank_features(df, columns_onehot, random_state, test_size):
 def rank_groups(df, columns_group):
     rows = []
     for grp, prefix in columns_group.items():
-        feats = df.loc[df['feature'].str.startswith(prefix), 'f_score']
-        if not feats.empty:
-            rows.append((grp, feats.mean(), feats.size))
+        group_df = df[df['feature'].str.startswith(prefix)]
+        if not group_df.empty:
+            f_mean = group_df['f_score'].mean()
+            p_mean = group_df['p_value'].mean()
+            freq_sum = group_df['frequency'].sum()
+            rows.append((grp, f_mean, p_mean, freq_sum))
     return (
-        pd.DataFrame(rows, columns=['feature','f_score_mean','elements'])
-          .sort_values('f_score_mean', ascending=False)
-          .reset_index(drop=True)
+        pd.DataFrame(
+            rows,
+            columns=['feature', 'f_score_mean', 'p_value_mean', 'frequency_total']
+        )
+        .sort_values('f_score_mean', ascending=False)
+        .reset_index(drop=True)
     )
 
 

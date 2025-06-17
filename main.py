@@ -36,9 +36,9 @@ PATH_DATA_RANK    = 'data/DATA_CLUSTER_3.csv'
 # df_binary = create_df_binary(df, COLUMNS_METADATA, COLUMNS_ONEHOT)
 # save_csv(PATH_DATA_BINARY, df_binary)
 
-# # verify DATA_BINARY.csv
-# df = read_csv(PATH_DATA_BINARY)
-# print_summary(df, COLUMNS_GROUP)
+# verify DATA_BINARY.csv
+df = read_csv(PATH_DATA_BINARY)
+print_summary(df, COLUMNS_GROUP)
 
 # # create DATA_CLUSTER_3.csv
 # k_values = [3]
@@ -52,5 +52,5 @@ PATH_DATA_RANK    = 'data/DATA_CLUSTER_3.csv'
 # rank DATA_CLUSTER3.csv
 df = read_csv(PATH_DATA_RANK)
 df_scores = rank_features(df, COLUMNS_ONEHOT, RANDOM_STATE, TEST_SIZE)
-print_df_scores(df_scores)
-print_df_scores(df_scores, TOP_N)
+print_df_scores(df_scores, COLUMNS_GROUP)
+print_df_scores(df_scores, COLUMNS_GROUP, TOP_N)

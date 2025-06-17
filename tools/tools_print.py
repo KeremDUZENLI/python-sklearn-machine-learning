@@ -1,15 +1,13 @@
 def print_summary(df, columns_metadata=None):
-    total_rows = len(df)
-    headers = ["Category", "Count", "Percent (%)"]
+    header = ["Category", "Count", "Percent (%)"]
 
     if isinstance(columns_metadata, dict):
         if all(isinstance(v, tuple) for v in columns_metadata.values()):
-            for column, (label_map, is_list) in columns_metadata.items():
-                if column not in df.columns:
+            for column_name, (label_map, is_list) in columns_metadata.items():
+                if column_name not in df.columns:
                     continue
-                title = f"{column} ({total_rows} rows)"
-                rows = _get_summary_rows(df, label_map, column, is_list)
-                _print_table(title, headers, rows)
+                rows = _get_summary_rows(df, label_map, column_name, is_list)
+                _print_table(column_name, header, rows)
 
         else:
             for group_name, prefix in columns_metadata.items():
@@ -26,9 +24,8 @@ def print_summary(df, columns_metadata=None):
                 if not selected_columns:
                     continue
 
-                title = f"{group_name} ({total_rows} rows)"
                 rows = _get_summary_rows_binary(df, selected_columns)
-                _print_table(title, headers, rows)
+                _print_table(group_name, header, rows)
 
 
 def print_summary_cluster(df, k):
@@ -39,30 +36,61 @@ def print_summary_cluster(df, k):
         print(f"{cluster_name}: min={row['min']} | max={row['max']} | {row['count']} items")
 
 
-def print_df_scores(df, top_n=None):
+# def print_df_scores(df, top_n=None):
+#     headers = ["Feature", "F-score", "p-value", "Freq"]
+    
+#     if top_n:
+#         title  = f"Top {top_n} features by F-score:"
+#         top_features = set(df.nlargest(top_n, 'f_score')['feature'])
+#         subset = df[df['feature'].isin(top_features)]
+#     else:
+#         title  = "All features by F-score:"
+#         subset = df
+
+#     rows = []
+#     for _, r in subset.iterrows():
+#         rows.append((
+#             r['feature'],
+#             f"{r['f_score']:.2f}",
+#             f"{r['p_value']:.3f}",
+#             int(r['frequency'])
+#         ))
+
+#     _print_table(title, headers, rows)
+    
+    
+def print_df_scores(df, columns_group, top_n=None):
+    header = ["Feature", "F-score", "p-value", "Freq"]
+
     if top_n:
-        subset = df.nlargest(top_n, 'f_score')
-        title  = f"Top {top_n} features by F-score:"
+        session   = f"Top {top_n} features by F-score:"
+        top_feats = set(df.nlargest(top_n, 'f_score')['feature'])
+        working   = df[df['feature'].isin(top_feats)]
     else:
-        subset = df
-        title  = "All features by F-score:"
+        session = "All features by F-score:"
+        working = df
 
-    rows = []
-    for _, r in subset.iterrows():
-        rows.append((
-            r['feature'],
-            f"{r['f_score']:.2f}",
-            f"{r['p_value']:.3f}",
-            int(r['frequency'])
-        ))
+    print(f"\n{session}")
+    for group_name, prefix in columns_group.items():
+        grp_df = working[working['feature'].str.startswith(prefix)]
+        if grp_df.empty:
+            continue
 
-    headers = ["Feature", "F-score", "p-value", "Freq"]
-    _print_table(title, headers, rows)
+        rows = []
+        for _, r in grp_df.iterrows():
+            rows.append((
+                r['feature'],
+                f"{r['f_score']:.2f}",
+                f"{r['p_value']:.3f}",
+                int(r['frequency'])
+            ))
+
+        _print_table(group_name, header, rows)
     
 
-def _print_table(title, headers, rows):
-    widths = _compute_column_widths(headers, rows)
-    header_line = " | ".join(headers[i].ljust(widths[i]) for i in range(len(headers)))
+def _print_table(title, header, rows):
+    widths = _compute_column_widths(header, rows)
+    header_line = " | ".join(header[i].ljust(widths[i]) for i in range(len(header)))
     separator = '─' * len(header_line)
 
     print(f"\n{title}")

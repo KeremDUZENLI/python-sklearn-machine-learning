@@ -2,13 +2,18 @@ import json, csv
 import pandas as pd
 
 
-def create_csv(path_output, header, rows):
+def convert_list_csv(path_output, header, rows):
     with open(path_output, 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(header)
         for row in rows:
             serialized_row = [_serialize(cell) for cell in row]
             writer.writerow(serialized_row)
+
+
+def save_csv(path_output, df, k=None):
+    filename = f"{path_output}_{k}.csv" if k is not None else path_output
+    df.to_csv(filename, index=False, encoding='utf-8')
 
 
 def read_csv(path_input, columns_metadata=None):

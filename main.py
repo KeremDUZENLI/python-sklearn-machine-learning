@@ -1,14 +1,14 @@
 from data._DATA_       import ROWS, ELOS
-from schema.config     import HEADER, COLUMNS_ONEHOT, COLUMNS_METADATA
-from tools.tools_csv   import create_csv, read_csv
-from tools.elo_cluster import plot_kmeans, create_csv_clustered
-from tools.onehot      import create_csv_binary
-from tools.utils       import print_summary
-from models.prune      import rank_features
+from schema.config     import HEADER, COLUMNS_ONEHOT, COLUMNS_METADATA, COLUMNS_GROUP
+from tools.tools_csv   import convert_list_csv, save_csv, read_csv
+from tools.tools_print import print_summary, print_summary_cluster, print_df_scores, print_df_scores_top_n
+from tools.elo_cluster import create_df_clustered, plot_k_means
+from tools.onehot      import create_df_binary
+from tools.rank        import rank_features
 
 
 K_MIN  = 3
-K_MAX  = 10
+K_MAX  = 9
 
 RANDOM_STATE = 42
 TEST_SIZE = 0.2
@@ -18,27 +18,38 @@ PATH_PLOT         = 'data/_.png'
 PATH_DATA_        = 'data/DATA_.csv'
 PATH_DATA_BINARY  = 'data/DATA_BINARY.csv'
 PATH_DATA_CLUSTER = 'data/DATA_CLUSTER'
-PATH_DATA_PRUNE   = 'data/DATA_CLUSTER_3.csv'
+PATH_DATA_RANK    = 'data/DATA_CLUSTER_3.csv'
 
+
+# # plot k_means
+# plot_k_means(PATH_PLOT, ELOS, K_MAX, RANDOM_STATE)
 
 # # create DATA_.csv
-# create_csv(PATH_DATA_, HEADER, ROWS)
+# convert_list_csv(PATH_DATA_, HEADER, ROWS)
 
-# # create DATA_BINARY.csv
-# df = read_csv(PATH_DATA_, COLUMNS_METADATA)
-# create_csv_binary(df, PATH_DATA_BINARY, COLUMNS_METADATA, COLUMNS_ONEHOT)
-
-# # verify the datasets
+# # verify DATA_.csv
 # df = read_csv(PATH_DATA_, COLUMNS_METADATA)
 # print_summary(df, COLUMNS_METADATA)
 
-# # plot k_means
-# plot_kmeans(PATH_PLOT, ELOS, K_MAX, RANDOM_STATE)
+# # create DATA_BINARY.csv
+# df = read_csv(PATH_DATA_, COLUMNS_METADATA)
+# df_binary = create_df_binary(df, COLUMNS_METADATA, COLUMNS_ONEHOT)
+# save_csv(PATH_DATA_BINARY, df_binary)
 
-# # create CLUSTERS
+# # verify DATA_BINARY.csv
 # df = read_csv(PATH_DATA_BINARY)
-# create_csv_clustered(df, PATH_DATA_CLUSTER, K_MIN, K_MAX, RANDOM_STATE)
+# print_summary(df, COLUMNS_GROUP)
 
-# pruning
-df = read_csv(PATH_DATA_PRUNE)
-rank_features(df, COLUMNS_ONEHOT, RANDOM_STATE, TEST_SIZE, TOP_N)
+# # create DATA_CLUSTER*.csv
+# df = read_csv(PATH_DATA_BINARY)
+# df_clustered = create_df_clustered(df, ELOS, K_MIN, K_MAX, RANDOM_STATE)
+
+# for k, df_clustered in df_clustered.items():
+#     print_summary_cluster(df_clustered, k)
+#     save_csv(PATH_DATA_CLUSTER, df_clustered, k)
+
+# rank DATA_CLUSTER3.csv
+df = read_csv(PATH_DATA_RANK)
+df_scores = rank_features(df, COLUMNS_ONEHOT, RANDOM_STATE, TEST_SIZE)
+print_df_scores(df_scores)
+print_df_scores_top_n(df_scores, TOP_N)

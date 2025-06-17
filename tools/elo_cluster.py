@@ -1,35 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
-
-
-def plot_kmeans(path_output, elos, k_max, random_state):
-    X = np.array(elos).reshape(-1, 1)
-    inertias = []
-
-    k_values = list(range(1, k_max + 1))
-    for k in k_values:
-        k_mean = _get_kmeans(k, random_state).fit(X)
-        inertias.append(k_mean.inertia_)
-
-    plt.figure(figsize=(8, 4))
-    plt.plot(k_values, inertias, marker='o')
-    plt.xticks(k_values)
-    plt.xlabel('Number of Clusters (k)')
-    plt.ylabel('Inertia')
-    plt.title('Elbow Method for Optimal Number of Clusters')
-    plt.tight_layout()
-    plt.savefig(path_output)
-
-
-def create_csv_clustered(df, path_output_prefix, elos, k_min, k_max, random_state):
-    df = _add_column_elo(df, elos)
+  
+       
+def create_df_clustered(df, elos, k_min, k_max, random_state):
+    df       = _add_column_elo(df, elos)
+    k_values = _get_k_values(k_min, k_max)
     
-    k_values = list(range(k_min, k_max + 1))
+    df_clustered = {}
     for k in k_values:
-        df_clustered = _add_column_cluster(df, k, random_state)
-        _print_summary_cluster(df_clustered, k)
-        _save_csv_clustered(df_clustered, k, path_output_prefix)
+        df_clustered[k] = _add_column_cluster(df, k, random_state)
+    return df_clustered
 
 
 def _add_column_elo(df, elos):
@@ -42,7 +23,7 @@ def _add_column_elo(df, elos):
 
 
 def _add_column_cluster(df, k, random_state):
-    km = _get_kmeans(k, random_state)
+    km = _get_k_means(k, random_state)
     km.fit(df[['elo']])
     labels = km.labels_
 
@@ -55,19 +36,28 @@ def _add_column_cluster(df, k, random_state):
     return df
 
 
-def _get_kmeans(k, random_state):
+def _get_k_means(k, random_state):
     return KMeans(n_clusters=k, random_state=random_state)
 
 
-def _print_summary_cluster(df, k):
-    print(f"\n=== cluster_{k} ===")
-    summary = df.groupby('cluster')['elo'].agg(['min', 'max', 'count'])
+def _get_k_values(start, end):
+    return list(range(start, end + 1))
+
+
+def plot_k_means(path_output, elos, k_max, random_state):
+    X        = np.array(elos).reshape(-1, 1)
+    k_values = _get_k_values(1, k_max)
     
-    for cluster_name, row in summary.iterrows():
-        print(f"{cluster_name}: min={row['min']}, max={row['max']}, {row['count']} items")
+    inertias = []
+    for k in k_values:
+        k_mean = _get_k_means(k, random_state).fit(X)
+        inertias.append(k_mean.inertia_)
 
-
-def _save_csv_clustered(df, k, path_prefix):
-    filename = f"{path_prefix}_{k}.csv"
-    df.to_csv(filename, index=False)
-    print(f"{filename} created.\n")
+    plt.figure(figsize=(8, 4))
+    plt.plot(k_values, inertias, marker='o')
+    plt.xticks(k_values)
+    plt.xlabel('Number of Clusters (k)')
+    plt.ylabel('Inertia')
+    plt.title('Elbow Method for Optimal Number of Clusters')
+    plt.tight_layout()
+    plt.savefig(path_output)

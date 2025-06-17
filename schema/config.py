@@ -206,3 +206,16 @@ COLUMNS_METADATA = {
     'software_modeling'        : (SOFTWARE_MODELING_MAP,        True),
     'software_render'          : (SOFTWARE_RENDER_MAP,          True),
 }
+
+COLUMNS_GROUP = {
+    "study_focus": "sf_",
+    "historical_site_type": "hst_",
+    "historical_site_type_sub": "hst_sub_",
+    "platform": "platform_",
+    "device": "device_",
+    "technique": "tech_",
+    "technique_sub": "tech_sub_",
+    "software_data": "sd_",
+    "software_modeling": "sm_",
+    "software_rendering": "sr_"
+}

@@ -1,15 +1,15 @@
 import pandas as pd
 
 
-def create_csv_binary(df, path_output, columns_metadata, columns_onehot=None):
+def create_df_binary(df, columns_metadata, columns_onehot=None):
     for column, (mapping, is_list) in columns_metadata.items():
         if column in df.columns:
             df = _create_rows_onehot(df, column, mapping, is_list)
 
     if columns_onehot:
-        df_final = _keep_ordered_columns(df, columns_onehot)
-    
-    df_final.to_csv(path_output, index=False, encoding='utf-8')
+        df = _keep_ordered_columns(df, columns_onehot)
+
+    return df
 
 
 def _create_rows_onehot(df, column, mapping, is_list=True):

@@ -58,7 +58,7 @@ def print_df_scores(df, top_n=None):
 
     headers = ["Feature", "F-score", "p-value", "Freq"]
     _print_table(title, headers, rows)
-
+    
 
 def _print_table(title, headers, rows):
     widths = _compute_column_widths(headers, rows)

@@ -3,9 +3,8 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
   
        
-def create_df_clustered(df, elos, k_min, k_max, random_state):
-    df       = _add_column_elo(df, elos)
-    k_values = _get_k_values(k_min, k_max)
+def create_df_clustered(df, elos, random_state, k_values):
+    df = _add_column_elo(df, elos)
     
     df_clustered = {}
     for k in k_values:
@@ -40,13 +39,8 @@ def _get_k_means(k, random_state):
     return KMeans(n_clusters=k, random_state=random_state)
 
 
-def _get_k_values(start, end):
-    return list(range(start, end + 1))
-
-
-def plot_k_means(path_output, elos, k_max, random_state):
-    X        = np.array(elos).reshape(-1, 1)
-    k_values = _get_k_values(1, k_max)
+def plot_k_means(path_output, elos, random_state, k_values):
+    X = np.array(elos).reshape(-1, 1)
     
     inertias = []
     for k in k_values:

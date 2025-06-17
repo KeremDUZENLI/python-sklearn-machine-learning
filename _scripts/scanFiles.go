@@ -11,7 +11,7 @@ import (
 
 var suffixes = []string{"py"}
 
-var ignore = []string{"data", "scripts"}
+var ignore = []string{"data", "_scripts"}
 
 func main() {
 	if err := walkTree(".", suffixes, ignore); err != nil {
@@ -19,7 +19,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := runPythonScript("scripts/treeASCII.py"); err != nil {
+	if err := runPythonScript("_scripts/treeASCII.py"); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to run Python script: %v\n", err)
 	}
 }

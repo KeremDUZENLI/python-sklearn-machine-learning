@@ -1,10 +1,10 @@
 from data._DATA_       import ROWS, ELOS
 from schema.config     import HEADER, COLUMNS_ONEHOT, COLUMNS_METADATA, COLUMNS_GROUP
 from tools.tools_csv   import convert_list_csv, save_csv, read_csv
-from tools.tools_print import print_summary, print_summary_cluster, print_df_scores
+from tools.tools_print import print_summary, print_summary_cluster, print_df_scores, print_df_scores_group
 from tools.elo_cluster import create_df_clustered, plot_k_means
 from tools.onehot      import create_df_binary
-from tools.rank        import rank_features
+from tools.rank        import rank_features, rank_groups
 
 
 K_MIN        = 3
@@ -36,9 +36,9 @@ PATH_DATA_RANK    = 'data/DATA_CLUSTER_3.csv'
 # df_binary = create_df_binary(df, COLUMNS_METADATA, COLUMNS_ONEHOT)
 # save_csv(PATH_DATA_BINARY, df_binary)
 
-# verify DATA_BINARY.csv
-df = read_csv(PATH_DATA_BINARY)
-print_summary(df, COLUMNS_GROUP)
+# # verify DATA_BINARY.csv
+# df = read_csv(PATH_DATA_BINARY)
+# print_summary(df, COLUMNS_GROUP)
 
 # # create DATA_CLUSTER_3.csv
 # k_values = [3]
@@ -49,8 +49,17 @@ print_summary(df, COLUMNS_GROUP)
 #     print_summary_cluster(df_clustered, k)
 #     save_csv(PATH_DATA_CLUSTER, df_clustered, k)
 
-# rank DATA_CLUSTER3.csv
+# # rank DATA_CLUSTER3.csv
+# df = read_csv(PATH_DATA_RANK)
+# df_scores = rank_features(df, COLUMNS_ONEHOT, RANDOM_STATE, TEST_SIZE)
+# print_df_scores(df_scores, COLUMNS_GROUP)
+# print_df_scores(df_scores, COLUMNS_GROUP, TOP_N)
+
+# rank groups DATA_CLUSTER3.csv
 df = read_csv(PATH_DATA_RANK)
 df_scores = rank_features(df, COLUMNS_ONEHOT, RANDOM_STATE, TEST_SIZE)
 print_df_scores(df_scores, COLUMNS_GROUP)
 print_df_scores(df_scores, COLUMNS_GROUP, TOP_N)
+df_group = rank_groups(df_scores, COLUMNS_GROUP)
+print_df_scores_group(df_group, COLUMNS_GROUP)
+print_df_scores_group(df_group, COLUMNS_GROUP, 10)

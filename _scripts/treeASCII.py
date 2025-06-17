@@ -1,7 +1,7 @@
 import os
 
 
-EXCLUDE = {'__pycache__', '.git', '.venv', 'scripts'}
+EXCLUDE = {'__pycache__', '.git', '.venv', '_scripts'}
 
 def is_excluded(path):
     parts = path.split(os.sep)

@@ -38,6 +38,19 @@ def rank_features(df, columns_onehot, random_state, test_size):
     return df_scores
 
 
+def rank_groups(df, columns_group):
+    rows = []
+    for grp, prefix in columns_group.items():
+        feats = df.loc[df['feature'].str.startswith(prefix), 'f_score']
+        if not feats.empty:
+            rows.append((grp, feats.mean(), feats.size))
+    return (
+        pd.DataFrame(rows, columns=['feature','f_score_mean','elements'])
+          .sort_values('f_score_mean', ascending=False)
+          .reset_index(drop=True)
+    )
+
+
 def _select_and_score(X_train, y_train):
     pipeline = Pipeline([
         ('var', VarianceThreshold(threshold=0.0)),           # 'var' removes any zero-variance columns

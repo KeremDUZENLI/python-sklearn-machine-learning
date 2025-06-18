@@ -21,61 +21,27 @@ def print_cluster_range(df, k=None):
     for cluster, row in summary.iterrows():
         print(f"{cluster}: min={row['min']} | max={row['max']} | {row['count']} items")
 
-
-def print_scores(
-    df,
-    columns,
-    sort_by=None,
-    filter_by=None,
-    threshold_p=None,
-    threshold_freq=None,
-    top_n=None,
-    column_order=None,
-    column_label='feature',
-):
+   
+def print_scores(df, columns, sort_by=None, threshold_p=None, threshold_freq=None, top_n=None):
     title = f"Top items sort by {sort_by}" if top_n else "All features"
     print(f"\n\n\n================== {title} ==================", end="")
-
-    if threshold_p is not None and filter_by in df.columns:
-        df = df[df[filter_by] <= threshold_p]
-            
-    if threshold_freq is not None and columns:
-        frequency_col = columns[-1]
-        if frequency_col in df.columns:
-            df = df[df[frequency_col] >= threshold_freq] 
-
-    if not column_order:
-        if top_n is not None and sort_by in df.columns:
-            df = df.nlargest(top_n, sort_by)
-        rows = _get_rows_score(df, columns)
-        _print_table("", columns, rows)
-        return
-
-    group_keys = list(column_order.keys())
-    features_set = set(df[column_label])
-
-    if features_set.issubset(group_keys) and len(features_set) == len(df):
-        order = df[column_label].map({k: i for i, k in enumerate(group_keys)})
-        df = df.assign(_order=order).sort_values('_order').drop(columns=['_order'])
-        if top_n is not None and sort_by in df.columns:
-            df = df.nlargest(top_n, sort_by)
-        rows = _get_rows_score(df, columns)
-        _print_table("", columns, rows)
-        return
-
-    sort_within_group = sort_by in df.columns if sort_by else False
-    ordered_rows = []
-    for _, prefix in column_order.items():
-        subset = df[df[column_label].str.startswith(prefix)]
-        if not subset.empty:
-            if sort_within_group:
-                subset = subset.sort_values(sort_by, ascending=False)
-            ordered_rows.extend(_get_rows_score(subset, columns))
     
-    if top_n is not None:
-        ordered_rows = ordered_rows[:top_n]
+    if sort_by:
+        df = df.sort_values(by=sort_by, ascending=False)
 
-    _print_table("", columns, ordered_rows)
+    if threshold_p:
+        column_filter = columns[-2]
+        df = df[df[column_filter] <= threshold_p]
+
+    if threshold_freq:
+        column_freq = columns[-1]
+        df = df[df[column_freq] >= threshold_freq]
+
+    if top_n:
+        df = df.head(top_n)
+
+    rows = _get_rows_score(df, columns)
+    _print_table("", columns, rows)
 
 
 def _get_rows_summary(df, column_order=None, column_name=None, is_list=False, columns_binary=None):

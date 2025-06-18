@@ -20,26 +20,26 @@ PATH_DATA_BINARY  = 'data/DATA_BINARY.csv'
 PATH_DATA_CLUSTER = 'data/DATA_CLUSTER.csv'
 
 
-# 1. Elbow plot for clustering
-plot_k_means(PATH_PLOT, ELOS, K_MAX, RANDOM_STATE)
+# # 1. Elbow plot for clustering
+# plot_k_means(PATH_PLOT, ELOS, K_MAX, RANDOM_STATE)
 
-# 2. Export raw CSV
-convert_list_csv(PATH_DATA_, HEADER, ROWS)
+# # 2. Export raw CSV
+# convert_list_csv(PATH_DATA_, HEADER, ROWS)
 
-# 3. Summarize raw data
-df = read_csv(PATH_DATA_, COLUMNS_METADATA)
-print_summary(df, COLUMNS_METADATA)
+# # 3. Summarize raw data
+# df = read_csv(PATH_DATA_, COLUMNS_METADATA)
+# print_summary(df, COLUMNS_METADATA)
 
-# 4. One-hot encoding
-df_binary = create_df_binary(df, COLUMNS_METADATA)
-save_csv(df_binary, PATH_DATA_BINARY)
-print_summary(df_binary, COLUMNS_METADATA)
+# # 4. One-hot encoding
+# df_binary = create_df_binary(df, COLUMNS_METADATA)
+# save_csv(df_binary, PATH_DATA_BINARY)
+# print_summary(df_binary, COLUMNS_METADATA)
 
-# 5. Clustering
-df_cluster = create_df_clustered(df_binary, ELOS, K, RANDOM_STATE)
-save_csv(df_cluster, PATH_DATA_CLUSTER)
-print_summary(df_cluster, COLUMNS_METADATA)
-print_cluster_range(df_cluster)
+# # 5. Clustering
+# df_cluster = create_df_clustered(df_binary, ELOS, K, RANDOM_STATE)
+# save_csv(df_cluster, PATH_DATA_CLUSTER)
+# print_summary(df_cluster, COLUMNS_METADATA)
+# print_cluster_range(df_cluster)
 
 # 6. Rank features
 X_tr, y_tr = split_train(read_csv(PATH_DATA_CLUSTER), 'cluster', ['elo', 'cluster'], TEST_SIZE, RANDOM_STATE)
@@ -47,13 +47,10 @@ df_scores  = compute_feature_scores(X_tr, y_tr)
 print_scores(
     df             = df_scores, 
     columns        = ['feature', 'f_score', 'p_value', 'frequency'],
-    sort_by        = 'f_score',
-    filter_by      = 'p_value',
+    sort_by        = None,
     threshold_p    = None,
     threshold_freq = None,
     top_n          = None,
-    column_order   = None,
-    column_label   = 'feature',
 )
 
 # 7. Rank groups
@@ -61,11 +58,8 @@ df_groups = aggregate_groups(df_scores, COLUMNS_METADATA)
 print_scores(
     df             = df_groups,
     columns        = ['feature', 'f_score_mean', 'p_value_mean', 'frequency_total'],
-    sort_by        = 'f_score_mean',
-    filter_by      = 'p_value_mean',
+    sort_by        = None,
     threshold_p    = None,
     threshold_freq = None,
     top_n          = None,
-    column_order   = None,
-    column_label   = 'feature',
 )

@@ -1,23 +1,18 @@
 def print_summary(df, column_order=None):
     header = ["Category", "Count", "Percent (%)"]
 
-    if not isinstance(column_order, dict):
-        return
-    
-    first_val = next(iter(column_order.values()))
-    if isinstance(first_val, tuple):
-        for column_name, (label_map, is_list) in column_order.items():
-            if column_name not in df.columns:
-                continue
-            rows = _get_rows_summary(df, label_map, column_name, is_list)
-            _print_table(column_name, header, rows)
-    else:
-        for group_name, prefix in column_order.items():
-            columns_binary = [c for c in df.columns if c.startswith(prefix)]
+    for group_name, (mapping, is_list) in column_order.items():
+        if is_list:
+            columns_binary = [col for col in mapping.keys() if col in df.columns]
             if not columns_binary:
                 continue
             rows = _get_rows_summary(df, columns_binary=columns_binary)
-            _print_table(group_name, header, rows)
+        else:
+            if group_name not in df.columns:
+                continue
+            rows = _get_rows_summary(df, column_order=mapping, column_name=group_name, is_list=False)
+
+        _print_table(group_name, header, rows)
      
 
 def print_cluster_range(df, k=None):

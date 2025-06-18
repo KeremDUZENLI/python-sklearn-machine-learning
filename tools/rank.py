@@ -40,10 +40,11 @@ def compute_feature_scores(X, y):
     return pd.DataFrame(rows)
 
 
-def aggregate_groups(df_scores, columns_group):
+def aggregate_groups(df_scores, column_order):
     rows = []
-    for grp, prefix in columns_group.items():
-        sub = df_scores[df_scores['feature'].str.startswith(prefix)]
+    for grp, (mapping, _) in column_order.items():
+        feature_keys = list(mapping.keys())
+        sub = df_scores[df_scores['feature'].isin(feature_keys)]
         if not sub.empty:
             rows.append({
                 'feature':         grp,

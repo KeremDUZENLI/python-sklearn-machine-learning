@@ -160,40 +160,6 @@ SOFTWARE_RENDER_MAP = {
     'sr_world_creator_2'  : 'World Creator 2',
 }
 
-COLUMNS_ONEHOT = [
-    # *HEADER[:4],
-
-    # 'study_focus',
-    *STUDY_FOCUS_MAP.keys(),
-
-    # 'historical_site_type',
-    *HISTORICAL_SITE_TYPE_MAP.keys(),
-
-    # 'historical_site_type_sub',
-    *HISTORICAL_SITE_TYPE_SUB_MAP.keys(),
-
-    # 'platform',
-    *PLATFORM_MAP.keys(),
-
-    # 'device',
-    *DEVICE_MAP.keys(),
-
-    # 'technique',
-    *TECHNIQUE_MAP.keys(),
-
-    # 'technique_sub',
-    *TECHNIQUE_SUB_MAP.keys(),
-
-    # 'software_data',
-    *SOFTWARE_DATA_MAP.keys(),
-
-    # 'software_modeling',
-    *SOFTWARE_MODELING_MAP.keys(),
-
-    # 'software_render',
-    *SOFTWARE_RENDER_MAP.keys(),
-]
-
 COLUMNS_METADATA = {
     'study_focus'              : (STUDY_FOCUS_MAP,              False),
     'historical_site_type'     : (HISTORICAL_SITE_TYPE_MAP,     False),
@@ -205,17 +171,4 @@ COLUMNS_METADATA = {
     'software_data'            : (SOFTWARE_DATA_MAP,            True),
     'software_modeling'        : (SOFTWARE_MODELING_MAP,        True),
     'software_render'          : (SOFTWARE_RENDER_MAP,          True),
-}
-
-COLUMNS_GROUP = {
-    "study_focus": "sf_",
-    "historical_site_type": "hst_",
-    "historical_site_type_sub": "hst_sub_",
-    "platform": "platform_",
-    "device": "device_",
-    "technique": "tech_",
-    "technique_sub": "tech_sub_",
-    "software_data": "sd_",
-    "software_modeling": "sm_",
-    "software_rendering": "sr_"
 }

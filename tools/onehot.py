@@ -1,15 +1,16 @@
 import pandas as pd
 
 
-def create_df_binary(df, columns_metadata, columns_onehot=None):
-    for column, (mapping, is_list) in columns_metadata.items():
+def create_df_binary(df, column_order):
+    for column, (mapping, is_list) in column_order.items():
         if column in df.columns:
             df = _create_rows_onehot(df, column, mapping, is_list)
 
-    if columns_onehot:
-        df = _keep_ordered_columns(df, columns_onehot)
+    ordered_cols = []
+    for column, (mapping, _) in column_order.items():
+        ordered_cols.extend([flag for flag in mapping.keys() if flag in df.columns])
 
-    return df
+    return df[ordered_cols]
 
 
 def _create_rows_onehot(df, column, mapping, is_list=True):
@@ -20,7 +21,3 @@ def _create_rows_onehot(df, column, mapping, is_list=True):
         else:
             flags[column_flag] = df[column].apply(lambda x: int(x == label))
     return pd.concat([df, pd.DataFrame(flags, index=df.index)], axis=1)
-
-
-def _keep_ordered_columns(df, columns_onehot):
-    return df[[column for column in columns_onehot if column in df.columns]]

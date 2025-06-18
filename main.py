@@ -1,5 +1,5 @@
 from data._DATA_       import ROWS, ELOS
-from schema.config     import HEADER, COLUMNS_ONEHOT, COLUMNS_METADATA, COLUMNS_GROUP
+from schema.config     import HEADER, COLUMNS_METADATA
 from tools.tools_csv   import convert_list_csv, save_csv, read_csv
 from tools.tools_print import print_summary, print_cluster_range, print_scores
 from tools.elo_cluster import create_df_clustered, plot_k_means
@@ -31,14 +31,14 @@ df = read_csv(PATH_DATA_, COLUMNS_METADATA)
 print_summary(df, COLUMNS_METADATA)
 
 # 4. One-hot encoding
-df_binary = create_df_binary(df, COLUMNS_METADATA, COLUMNS_ONEHOT)
+df_binary = create_df_binary(df, COLUMNS_METADATA)
 save_csv(df_binary, PATH_DATA_BINARY)
-print_summary(df_binary, COLUMNS_GROUP)
+print_summary(df_binary, COLUMNS_METADATA)
 
 # 5. Clustering
 df_cluster = create_df_clustered(df_binary, ELOS, K, RANDOM_STATE)
 save_csv(df_cluster, PATH_DATA_CLUSTER)
-print_summary(df_cluster, COLUMNS_GROUP)
+print_summary(df_cluster, COLUMNS_METADATA)
 print_cluster_range(df_cluster)
 
 # 6. Rank features
@@ -49,23 +49,23 @@ print_scores(
     columns        = ['feature', 'f_score', 'p_value', 'frequency'],
     sort_by        = 'f_score',
     filter_by      = 'p_value',
-    threshold_p    = 0.5,
-    threshold_freq = 5,
-    top_n          = 10,
-    column_order   = COLUMNS_GROUP,
+    threshold_p    = None,
+    threshold_freq = None,
+    top_n          = None,
+    column_order   = None,
     column_label   = 'feature',
 )
 
 # 7. Rank groups
-df_groups = aggregate_groups(df_scores, COLUMNS_GROUP)
+df_groups = aggregate_groups(df_scores, COLUMNS_METADATA)
 print_scores(
     df             = df_groups,
     columns        = ['feature', 'f_score_mean', 'p_value_mean', 'frequency_total'],
     sort_by        = 'f_score_mean',
     filter_by      = 'p_value_mean',
-    threshold_p    = 0.5,
-    threshold_freq = 5,
-    top_n          = 10,
-    column_order   = COLUMNS_GROUP,
+    threshold_p    = None,
+    threshold_freq = None,
+    top_n          = None,
+    column_order   = None,
     column_label   = 'feature',
 )

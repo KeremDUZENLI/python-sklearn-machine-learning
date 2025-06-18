@@ -1,7 +1,7 @@
-def print_summary(df, column_order=None):
+def print_summary(df, columns_metadata=None):
     header = ["Category", "Count", "Percent (%)"]
 
-    for group_name, (mapping, is_list) in column_order.items():
+    for group_name, (mapping, is_list) in columns_metadata.items():
         if is_list:
             columns_binary = [col for col in mapping.keys() if col in df.columns]
             if not columns_binary:

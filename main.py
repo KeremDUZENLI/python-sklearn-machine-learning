@@ -1,10 +1,10 @@
 from data._DATA_       import ROWS, ELOS
 from schema.config     import HEADER, COLUMNS_METADATA
-from tools.tools_csv   import convert_list_csv, save_csv, read_csv
+from tools.tools_csv   import convert_list_csv, save_csv, read_csv, keep_columns_csv
 from tools.tools_print import print_summary, print_cluster_range, print_scores
 from tools.elo_cluster import create_df_clustered, plot_k_means
 from tools.onehot      import create_df_binary
-from tools.rank       import split_train, compute_feature_scores, aggregate_groups
+from tools.rank        import split_train, compute_feature_scores, aggregate_groups
 
 
 # Parameters
@@ -63,3 +63,9 @@ print_scores(
     threshold_freq = None,
     top_n          = None,
 )
+
+
+keep_keys = list(COLUMNS_METADATA.keys())[0:1]
+df = read_csv(PATH_DATA_CLUSTER, COLUMNS_METADATA)
+df = keep_columns_csv(df, COLUMNS_METADATA, keep_keys)
+save_csv(df, "data/DATA_filtered.csv")

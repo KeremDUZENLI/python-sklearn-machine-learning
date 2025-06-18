@@ -26,6 +26,25 @@ def read_csv(path_input, columns_metadata=None):
     return df
 
 
+def keep_columns_csv(df, columns_metadata, keep_keys):
+    keep_columns = []
+    for key in keep_keys:
+        if key in df.columns:
+            keep_columns.append(key)
+        mapping, _ = columns_metadata[key]
+        keep_columns.extend([col for col in mapping if col in df.columns])
+    return df[keep_columns]
+
+
+def drop_columns_csv(df, columns_metadata, drop_keys):
+    drop_columns = []
+    for key in drop_keys:
+        mapping, _ = columns_metadata[key]
+        drop_columns.append(key)
+        drop_columns.extend([col for col in mapping if col in df.columns])
+    return df.drop(columns=drop_columns, errors='ignore')
+
+
 def _serialize(cell):
     return json.dumps(cell, ensure_ascii=False) if isinstance(cell, list) else cell
 

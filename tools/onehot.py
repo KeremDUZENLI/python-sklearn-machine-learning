@@ -1,13 +1,13 @@
 import pandas as pd
 
 
-def create_df_binary(df, column_order):
-    for column, (mapping, is_list) in column_order.items():
+def create_df_binary(df, columns_metadata):
+    for column, (mapping, is_list) in columns_metadata.items():
         if column in df.columns:
             df = _create_rows_onehot(df, column, mapping, is_list)
 
     ordered_cols = []
-    for column, (mapping, _) in column_order.items():
+    for column, (mapping, _) in columns_metadata.items():
         ordered_cols.extend([flag for flag in mapping.keys() if flag in df.columns])
 
     return df[ordered_cols]

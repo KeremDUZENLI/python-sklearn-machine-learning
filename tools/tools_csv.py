@@ -11,7 +11,7 @@ def convert_list_csv(path_output, header, rows):
             writer.writerow(serialized_row)
 
 
-def save_csv(path_output, df, k=None):
+def save_csv(df, path_output, k=None):
     filename = f"{path_output}_{k}.csv" if k is not None else path_output
     df.to_csv(filename, index=False, encoding='utf-8')
 

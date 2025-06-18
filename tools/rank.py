@@ -1,74 +1,54 @@
 import pandas as pd
-from sklearn.pipeline            import Pipeline
-from sklearn.model_selection     import train_test_split
-from sklearn.preprocessing       import LabelEncoder
-from sklearn.feature_selection   import VarianceThreshold, SelectKBest, f_classif
+from sklearn.pipeline          import Pipeline
+from sklearn.model_selection   import train_test_split
+from sklearn.preprocessing     import LabelEncoder
+from sklearn.feature_selection import VarianceThreshold, SelectKBest, f_classif
 
 
-def rank_features(df, columns_onehot, random_state, test_size):
-    X = df.drop(['elo','cluster'], axis=1)
-    y = LabelEncoder().fit_transform(df['cluster'])
-
+def split_train(df, column_label, column_drop, test_size, random_state):
+    X = df.drop(column_drop, axis=1)
+    y = LabelEncoder().fit_transform(df[column_label])
     X_tr, _, y_tr, _ = train_test_split(
         X, y,
         test_size=test_size,
         stratify=y,
         random_state=random_state
     )
-    
-    kept_cols, f_scores, p_values = _select_and_score(X_tr, y_tr)
-    X_tr_clean                    = X_tr.loc[:, kept_cols]
-    valid_columns_onehot          = [column for column in columns_onehot if column in kept_cols]   
-    
-    df_results = (pd.DataFrame({
-        'feature': kept_cols,
-        'f_score': f_scores,
-        'p_value': p_values,
-        }).set_index('feature')
-    )
+    return X_tr, y_tr
+  
 
-    frequency = X_tr_clean.sum().rename('frequency')
-    df_scores = (
-        df_results
-        .join(frequency)
-        .loc[valid_columns_onehot]
-        .reset_index()
-    )
+def compute_feature_scores(X, y):
+    pipe = Pipeline([
+        ('var', VarianceThreshold()),
+        ('skb', SelectKBest(f_classif, k='all'))
+    ])
+    pipe.fit(X, y)
 
-    return df_scores
+    mask  = pipe.named_steps['var'].get_support()
+    feats = X.columns[mask]
+    skb   = pipe.named_steps['skb']
+
+    rows = []
+    for feat, f, p in zip(feats, skb.scores_, skb.pvalues_):
+        rows.append({
+            'feature':   feat,
+            'f_score':    f,
+            'p_value':    p,
+            'frequency':  int(X[feat].sum()),
+        })
+
+    return pd.DataFrame(rows)
 
 
-def rank_groups(df, columns_group):
+def aggregate_groups(df_scores, columns_group):
     rows = []
     for grp, prefix in columns_group.items():
-        group_df = df[df['feature'].str.startswith(prefix)]
-        if not group_df.empty:
-            f_mean = group_df['f_score'].mean()
-            p_mean = group_df['p_value'].mean()
-            freq_sum = group_df['frequency'].sum()
-            rows.append((grp, f_mean, p_mean, freq_sum))
-    return (
-        pd.DataFrame(
-            rows,
-            columns=['feature', 'f_score_mean', 'p_value_mean', 'frequency_total']
-        )
-        .sort_values('f_score_mean', ascending=False)
-        .reset_index(drop=True)
-    )
-
-
-def _select_and_score(X_train, y_train):
-    pipeline = Pipeline([
-        ('var', VarianceThreshold(threshold=0.0)),           # 'var' removes any zero-variance columns
-        ('skb', SelectKBest(score_func=f_classif, k='all')), # 'skb' computes f_classif on the remaining ones
-    ])
-    pipeline.fit(X_train, y_train)
-
-    var_mask  = pipeline.named_steps['var'].get_support()
-    kept_cols = X_train.columns[var_mask]
-
-    skb       = pipeline.named_steps['skb']
-    f_scores  = skb.scores_
-    p_values  = skb.pvalues_
-
-    return kept_cols, f_scores, p_values
+        sub = df_scores[df_scores['feature'].str.startswith(prefix)]
+        if not sub.empty:
+            rows.append({
+                'feature':         grp,
+                'f_score_mean':    sub['f_score'].mean(),
+                'p_value_mean':    sub['p_value'].mean(),
+                'frequency_total': int(sub['frequency'].sum()),
+            })
+    return pd.DataFrame(rows)

@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
-  
-       
+
+
 def create_df_clustered(df, elos, k_values, random_state):
     df = _add_column_elo(df, elos)
     

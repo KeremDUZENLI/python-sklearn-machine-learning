@@ -1,31 +1,33 @@
-import pandas as pd
 from sklearn.pipeline          import Pipeline
-from sklearn.model_selection   import train_test_split
-from sklearn.preprocessing     import LabelEncoder
 from sklearn.feature_selection import VarianceThreshold, SelectKBest, f_classif
 
+from sklearn.preprocessing     import LabelEncoder
+from sklearn.model_selection   import train_test_split
 
-def split_train(df, column_label, column_drop, test_size, random_state):
+import pandas as pd
+
+
+def split_train(df, test_size, random_state, column_drop, column_label):
     X = df.drop(column_drop, axis=1)
     y = LabelEncoder().fit_transform(df[column_label])
-    X_tr, _, y_tr, _ = train_test_split(
+    X_train, X_test, y_train, y_test = train_test_split(
         X, y,
         test_size=test_size,
         stratify=y,
         random_state=random_state
     )
-    return X_tr, y_tr
+    return X_train, X_test, y_train, y_test
   
 
-def compute_feature_scores(X, y):
+def compute_feature_scores(X_train, y_train):
     pipe = Pipeline([
         ('var', VarianceThreshold()),
         ('skb', SelectKBest(f_classif, k='all'))
     ])
-    pipe.fit(X, y)
+    pipe.fit(X_train, y_train)
 
     mask  = pipe.named_steps['var'].get_support()
-    feats = X.columns[mask]
+    feats = X_train.columns[mask]
     skb   = pipe.named_steps['skb']
 
     rows = []
@@ -34,7 +36,7 @@ def compute_feature_scores(X, y):
             'feature':   feat,
             'f_score':    f,
             'p_value':    p,
-            'frequency':  int(X[feat].sum()),
+            'frequency':  int(X_train[feat].sum()),
         })
 
     return pd.DataFrame(rows)

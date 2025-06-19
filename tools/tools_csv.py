@@ -26,34 +26,34 @@ def read_csv(path_input, columns_metadata=None):
     return df
 
 
-def keep_columns_csv(df, columns_metadata, columns_keep):
-    keep_columns = []           
-    for key in columns_keep:
+def keep_columns_csv(df, columns_metadata, column_keep):
+    keep = []           
+    for key in column_keep:
         if key in df.columns:
-            keep_columns.append(key)
+            keep.append(key)
         if key in columns_metadata:
             mapping, _ = columns_metadata[key]
             for column in mapping:
                 if column in df.columns:
-                    keep_columns.append(column)
+                    keep.append(column)
 
-    keep_columns = list(dict.fromkeys(keep_columns))
-    return df[keep_columns]
+    keep = list(dict.fromkeys(keep))
+    return df[keep]
 
 
-def drop_columns_csv(df, columns_metadata, columns_drop):           
-    drop_columns = []
-    for key in columns_drop:
+def drop_columns_csv(df, columns_metadata, column_drop):           
+    drop = []
+    for key in column_drop:
         if key in df.columns:
-            drop_columns.append(key)
+            drop.append(key)
         if key in columns_metadata:
             mapping, _ = columns_metadata[key]
             for column in mapping:
                 if column in df.columns:
-                    drop_columns.append(column)
+                    drop.append(column)
 
-    drop_columns = list(dict.fromkeys(drop_columns))
-    return df.drop(columns=drop_columns, errors='ignore')
+    drop = list(dict.fromkeys(drop))
+    return df.drop(columns=drop, errors='ignore')
 
 
 def _serialize(cell):

@@ -18,6 +18,7 @@ PATH_PLOT         = 'data/_.png'
 PATH_DATA_        = 'data/DATA_.csv'
 PATH_DATA_BINARY  = 'data/DATA_BINARY.csv'
 PATH_DATA_CLUSTER = 'data/DATA_CLUSTER.csv'
+PATH_DATA_FILTER  = 'data/DATA_FILTER.csv'
 
 
 # # 1. Elbow plot for clustering
@@ -48,7 +49,7 @@ print_scores(
     df             = df_scores, 
     columns        = ['feature', 'f_score', 'p_value', 'frequency'],
     sort_by        = None,
-    threshold_p    = None,
+    threshold_p    = 0.35,
     threshold_freq = None,
     top_n          = None,
 )
@@ -58,14 +59,14 @@ df_groups = aggregate_groups(df_scores, COLUMNS_METADATA)
 print_scores(
     df             = df_groups,
     columns        = ['feature', 'f_score_mean', 'p_value_mean', 'frequency_total'],
-    sort_by        = None,
-    threshold_p    = None,
+    sort_by        = 'f_score_mean',
+    threshold_p    = 0.35,
     threshold_freq = None,
     top_n          = None,
 )
 
-
-keep_keys = list(COLUMNS_METADATA.keys())[0:1]
+# 8. Filter columns
+columns_keep = list(COLUMNS_METADATA.keys())[0:2] + ['elo','cluster']
 df = read_csv(PATH_DATA_CLUSTER, COLUMNS_METADATA)
-df = keep_columns_csv(df, COLUMNS_METADATA, keep_keys)
-save_csv(df, "data/DATA_filtered.csv")
+df = keep_columns_csv(df, COLUMNS_METADATA, columns_keep)
+save_csv(df, PATH_DATA_FILTER)

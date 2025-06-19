@@ -26,22 +26,33 @@ def read_csv(path_input, columns_metadata=None):
     return df
 
 
-def keep_columns_csv(df, columns_metadata, keep_keys):
-    keep_columns = []
-    for key in keep_keys:
+def keep_columns_csv(df, columns_metadata, columns_keep):
+    keep_columns = []           
+    for key in columns_keep:
         if key in df.columns:
             keep_columns.append(key)
-        mapping, _ = columns_metadata[key]
-        keep_columns.extend([col for col in mapping if col in df.columns])
+        if key in columns_metadata:
+            mapping, _ = columns_metadata[key]
+            for column in mapping:
+                if column in df.columns:
+                    keep_columns.append(column)
+
+    keep_columns = list(dict.fromkeys(keep_columns))
     return df[keep_columns]
 
 
-def drop_columns_csv(df, columns_metadata, drop_keys):
+def drop_columns_csv(df, columns_metadata, columns_drop):           
     drop_columns = []
-    for key in drop_keys:
-        mapping, _ = columns_metadata[key]
-        drop_columns.append(key)
-        drop_columns.extend([col for col in mapping if col in df.columns])
+    for key in columns_drop:
+        if key in df.columns:
+            drop_columns.append(key)
+        if key in columns_metadata:
+            mapping, _ = columns_metadata[key]
+            for column in mapping:
+                if column in df.columns:
+                    drop_columns.append(column)
+
+    drop_columns = list(dict.fromkeys(drop_columns))
     return df.drop(columns=drop_columns, errors='ignore')
 
 

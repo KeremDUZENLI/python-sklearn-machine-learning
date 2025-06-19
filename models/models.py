@@ -13,17 +13,6 @@ from sklearn.neighbors         import KNeighborsClassifier
 from sklearn.neural_network    import MLPClassifier
 
 
-files = [
-    'DATA/DATA_cluster.csv',
-    'DATA/DATA_cluster3.csv',
-    'DATA/DATA_cluster4.csv',
-    'DATA/DATA_cluster5.csv',
-    'DATA/DATA_cluster6.csv',
-    'DATA/DATA_cluster7.csv',
-    'DATA/DATA_cluster8.csv',
-    'DATA/DATA_cluster9.csv',
-]
-
 models = [
     ('Naive Bayes (Gaussian)'                  , GaussianNB()),
     ('Logistic Regression (ridge)'             , LogisticRegression(penalty='l2', solver='lbfgs', max_iter=1000, random_state=42)),

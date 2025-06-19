@@ -1,4 +1,4 @@
-def print_summary(df, columns_metadata=None):
+def print_summary(df, columns_metadata):
     header = ["Category", "Count", "Percent (%)"]
 
     for group_name, (mapping, is_list) in columns_metadata.items():
@@ -42,6 +42,15 @@ def print_scores(df, columns, sort_by=None, threshold_p=None, threshold_freq=Non
 
     rows = _get_rows_score(df, columns)
     _print_table("", columns, rows)
+       
+        
+def print_models(results):
+    title = "Model Evaluation Results"
+    print(f"\n\n\n================== {title} ==================", end="")
+
+    header = ['Model', 'Accuracy (%)', 'Time (s)']
+    rows   = [(name, f"{acc:.3f}", f"{elapsed:.3f}") for name, acc, elapsed in results]
+    _print_table("", header, rows)
 
 
 def _get_rows_summary(df, column_order=None, column_name=None, is_list=False, columns_binary=None):

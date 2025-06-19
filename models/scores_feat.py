@@ -7,7 +7,7 @@ from sklearn.model_selection   import train_test_split
 import pandas as pd
 
 
-def split_train(df, test_size, random_state, column_drop, column_label):
+def split_dataset(df, test_size, random_state, column_drop, column_label):
     X = df.drop(column_drop, axis=1)
     y = LabelEncoder().fit_transform(df[column_label])
     X_train, X_test, y_train, y_test = train_test_split(
@@ -17,7 +17,7 @@ def split_train(df, test_size, random_state, column_drop, column_label):
         random_state=random_state
     )
     return X_train, X_test, y_train, y_test
-  
+
 
 def compute_feature_scores(X_train, y_train):
     pipe = Pipeline([

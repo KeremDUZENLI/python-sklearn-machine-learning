@@ -1,9 +1,22 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 
 
-def create_df_clustered(df, elos, k_values, random_state):
+def create_df_binary(df, columns_metadata):
+    for column, (mapping, is_list) in columns_metadata.items():
+        if column in df.columns:
+            df = _create_rows_onehot(df, column, mapping, is_list)
+
+    ordered_cols = []
+    for column, (mapping, _) in columns_metadata.items():
+        ordered_cols.extend([flag for flag in mapping.keys() if flag in df.columns])
+
+    return df[ordered_cols]
+
+
+def create_df_cluster(df, elos, k_values, random_state):
     df = _add_column_elo(df, elos)
     
     if isinstance(k_values, int):
@@ -13,6 +26,16 @@ def create_df_clustered(df, elos, k_values, random_state):
     for k in k_values:
         df_clustered[k] = _add_column_cluster(df, k, random_state)
     return df_clustered
+
+
+def _create_rows_onehot(df, column, mapping, is_list=True):
+    flags = {}
+    for column_flag, label in mapping.items():
+        if is_list:
+            flags[column_flag] = df[column].apply(lambda lst: int(label in lst))
+        else:
+            flags[column_flag] = df[column].apply(lambda x: int(x == label))
+    return pd.concat([df, pd.DataFrame(flags, index=df.index)], axis=1)
 
 
 def _add_column_elo(df, elos):

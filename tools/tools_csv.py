@@ -1,14 +1,10 @@
-import json, csv
+import json
 import pandas as pd
 
-
-def convert_list_csv(path_output, header, rows):
-    with open(path_output, 'w', newline='', encoding='utf-8') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(header)
-        for row in rows:
-            serialized_row = [_serialize(cell) for cell in row]
-            writer.writerow(serialized_row)
+          
+def convert_list_csv(header, rows):
+    serialized_rows = [[_serialize(cell) for cell in row] for row in rows]
+    return pd.DataFrame(serialized_rows, columns=header)
 
 
 def save_csv(df, path_output, k=None):

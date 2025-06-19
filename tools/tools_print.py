@@ -1,6 +1,7 @@
 def print_summary(df, columns_metadata):
+    _print_title("Summary of the Dataset")
+    
     header = ["Category", "Count", "Percent (%)"]
-
     for group_name, (mapping, is_list) in columns_metadata.items():
         if is_list:
             columns_binary = [col for col in mapping.keys() if col in df.columns]
@@ -16,15 +17,16 @@ def print_summary(df, columns_metadata):
      
 
 def print_cluster_range(df, k=None):
-    print(f"\n=== cluster_{k or ''} ===")
+    _print_title(f"cluster{k or ''}")
+    print()
+    
     summary = df.groupby('cluster')['elo'].agg(['min', 'max', 'count'])
     for cluster, row in summary.iterrows():
         print(f"{cluster}: min={row['min']} | max={row['max']} | {row['count']} items")
 
-   
-def print_scores(df, columns, sort_by=None, threshold_p=None, threshold_freq=None, top_n=None):
-    title = f"Top items sort by {sort_by}" if top_n else "All features"
-    print(f"\n\n\n================== {title} ==================", end="")
+
+def print_scores(df, columns, sort_by=None, threshold_p=None, threshold_freq=None, top_n=None):    
+    _print_title(f"Top items sort by {sort_by}" if top_n else "All features")
     
     if sort_by:
         df = df.sort_values(by=sort_by, ascending=False)
@@ -45,8 +47,7 @@ def print_scores(df, columns, sort_by=None, threshold_p=None, threshold_freq=Non
   
     
 def print_models(df, columns, sort_by=None):
-    title = "Model Evaluation Results"
-    print(f"\n\n\n================== {title} ==================", end="")
+    _print_title("Model Evaluation Results")
 
     if sort_by:
         df = df.sort_values(by=sort_by, ascending=False)
@@ -109,3 +110,7 @@ def _compute_column_width(headers, rows):
         for i, cell in enumerate(row):
             widths[i] = max(widths[i], len(str(cell)))
     return [w + 2 for w in widths]
+
+
+def _print_title(title):
+    print(f"\n\n\n================== {title} ==================", end="")

@@ -17,10 +17,10 @@ TEST_SIZE    = 0.2
 RANDOM_STATE = 42
 
 # Paths
-PATH_PLOT                    = 'data/K_MEAN.png'
-PATH_DATA_                   = 'data/DATA_.csv'
-PATH_DATA_BINARY             = 'data/DATA_BINARY.csv'
-PATH_DATA_CLUSTER            = 'data/DATA_CLUSTER.csv'
+PATH_PLOT         = 'data/K_MEAN.png'
+PATH_DATA_        = 'data/DATA_.csv'
+PATH_DATA_BINARY  = 'data/DATA_BINARY.csv'
+PATH_DATA_CLUSTER = 'data/DATA_CLUSTER.csv'
 
 PATH_DATA_FEATURES_SCORES = 'data/DATA_FEATURES_SCORES.csv'
 PATH_DATA_FEATURES_FILTER = 'data/DATA_FEATURES_FILTER.csv'
@@ -69,7 +69,6 @@ X_train, X_test, y_train, y_test = split_dataset(
 # 6.1. Compute features score
 df_rank_scores = compute_feature_scores(X_train, y_train)
 save_csv(df_rank_scores, PATH_DATA_FEATURES_SCORES)
-
 print_scores(
     df             = read_csv(PATH_DATA_FEATURES_SCORES), 
     columns        = ['feature', 'f_score', 'p_value', 'frequency'],
@@ -120,7 +119,6 @@ X_train, X_test, y_train, y_test = split_dataset(
 results = evaluate_models(X_train, X_test, y_train, y_test)
 df_results = convert_list_csv(['model', 'accuracy', 'time'], results)
 save_csv(df_results, PATH_DATA_FEATURES_RESULT)
-
 print_models(
     df      = read_csv(PATH_DATA_FEATURES_RESULT),
     columns = ['model','accuracy','time'],
@@ -131,9 +129,8 @@ print_models(
 
 
 # 7.1. Compute groups score
-df_rank_groups = aggregate_groups(df_rank_scores, COLUMNS_METADATA)
+df_rank_groups = aggregate_groups(read_csv(PATH_DATA_FEATURES_SCORES), COLUMNS_METADATA)
 save_csv(df_rank_groups, PATH_DATA_GROUPS_SCORES)
-
 print_scores(
     df             = read_csv(PATH_DATA_GROUPS_SCORES),
     columns        = ['feature', 'f_score_mean', 'p_value_mean', 'frequency_total'],
@@ -173,7 +170,6 @@ X_train, X_test, y_train, y_test = split_dataset(
 results = evaluate_models(X_train, X_test, y_train, y_test)
 df_results = convert_list_csv(['model', 'accuracy', 'time'], results)
 save_csv(df_results, PATH_DATA_GROUPS_RESULT)
-
 print_models(
     df      = read_csv(PATH_DATA_GROUPS_RESULT),
     columns = ['model','accuracy','time'],

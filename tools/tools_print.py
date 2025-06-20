@@ -1,42 +1,67 @@
+from tests.verifier import check_anomaly
+
+         
+def print_anomaly(df, columns_metadata):
+    _print_title("Config vs Data Features")
+    header = ["issue"]
+    anomalies = check_anomaly(df, columns_metadata)
+    
+    if not anomalies:
+        print("\nNO ANOMALIES\n")
+        return
+
+    for column, features in anomalies.items():
+        rows = [[feature] for feature in features]
+        _print_table(column, header, rows)
+
+
 def print_summary(df, columns_metadata):
     _print_title("Summary of the Dataset")
-    
-    header = ["Category", "Count", "Percent (%)"]
-    for group_name, (mapping, is_list) in columns_metadata.items():
-        if is_list:
-            columns_binary = [col for col in mapping.keys() if col in df.columns]
-            if not columns_binary:
-                continue
-            rows = _get_rows_summary(df, columns_binary=columns_binary)
-        else:
-            if group_name not in df.columns:
-                continue
-            rows = _get_rows_summary(df, column_order=mapping, column_name=group_name, is_list=False)
+    header = ["category", "count", "percent"]
 
-        _print_table(group_name, header, rows)
-     
+    total = len(df)
+    for column, (mapping, is_list) in columns_metadata.items():
+        rows = []
+
+        if column in df.columns:
+            for label in mapping.values():
+                count = df[column].apply(lambda x: label in x).sum() if is_list else (df[column] == label).sum()
+                rows.append((label, count, round(count / total * 100, 2)))
+        else:
+            for column_binary in mapping:
+                if column_binary in df.columns:
+                    count = df[column_binary].sum()
+                    rows.append((column_binary, count, round(count / total * 100, 2)))
+
+        if rows:
+            _print_table(column, header, rows)
+
 
 def print_cluster_range(df, k=None):
     _print_title(f"cluster{k or ''}")
     print()
-    
+
     summary = df.groupby('cluster')['elo'].agg(['min', 'max', 'count'])
     for cluster, row in summary.iterrows():
         print(f"{cluster}: min={row['min']} | max={row['max']} | {row['count']} items")
 
 
-def print_scores(df, columns, sort_by=None, threshold_p=None, threshold_freq=None, top_n=None):    
+def print_scores(df, columns, sort_by=None, threshold_f=None, threshold_p=None, threshold_freq=None, top_n=None):    
     _print_title(f"Top items sort by {sort_by}" if top_n else "All features")
     
     if sort_by:
         df = df.sort_values(by=sort_by, ascending=False)
+        
+    if threshold_f:
+        column_f = columns[1]
+        df = df[df[column_f] >= threshold_f]
 
     if threshold_p:
-        column_filter = columns[-2]
+        column_filter = columns[2]
         df = df[df[column_filter] <= threshold_p]
 
     if threshold_freq:
-        column_freq = columns[-1]
+        column_freq = columns[3]
         df = df[df[column_freq] >= threshold_freq]
 
     if top_n:
@@ -44,7 +69,7 @@ def print_scores(df, columns, sort_by=None, threshold_p=None, threshold_freq=Non
 
     rows = _get_rows_score(df, columns)
     _print_table("", columns, rows)
-  
+
     
 def print_models(df, columns, sort_by=None):
     _print_title("Model Evaluation Results")
@@ -56,28 +81,6 @@ def print_models(df, columns, sort_by=None):
     _print_table("", columns, rows)
 
 
-def _get_rows_summary(df, column_order=None, column_name=None, is_list=False, columns_binary=None):
-    total = len(df)
-    
-    rows = []
-    if columns_binary:
-        for col in columns_binary:
-            count = df[col].sum()
-            percent = round(count / total * 100, 2)
-            rows.append((col, count, percent))
-
-    elif column_order and column_name:
-        for _, label in column_order.items():
-            if is_list:
-                count = df[column_name].apply(lambda x: label in x).sum()
-            else:
-                count = (df[column_name] == label).sum()
-            percent = round(count / total * 100, 2)
-            rows.append((label, count, percent))
-            
-    return rows
-
-
 def _get_rows_score(df, columns):
     rows = []
     for _, row in df.iterrows():
@@ -85,7 +88,7 @@ def _get_rows_score(df, columns):
         for col in columns:
             val = row[col]
             if isinstance(val, float):
-                formatted.append(f"{val:.3f}" if "p_value" in col else f"{val:.2f}")
+                formatted.append(f"{val:.2f}")
             else:
                 formatted.append(str(val))
         rows.append(tuple(formatted))

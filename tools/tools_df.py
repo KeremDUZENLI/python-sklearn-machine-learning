@@ -4,6 +4,18 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 
 
+def filter_rare_features(df, columns_metadata, min_freq):
+    for base, (mapping_dict, is_list) in columns_metadata.items():
+        if not is_list:
+            continue
+
+        for col in mapping_dict.keys():
+            if col in df.columns and df[col].sum() < min_freq:
+                df.drop(columns=[col], inplace=True)
+
+    return df
+
+
 def create_df_binary(df, columns_metadata):
     for column, (mapping, is_list) in columns_metadata.items():
         if column in df.columns:

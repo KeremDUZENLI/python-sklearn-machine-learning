@@ -100,9 +100,13 @@ TECHNIQUE_SUB_MAP = {
 SOFTWARE_DATA_MAP = {
     'sd_autodesk_recap'        : 'Autodesk ReCap',
     'sd_autodesk_mudbox'       : 'Autodesk Mudbox',
+    'sd_autodesk_meshmixer'    : 'Autodesk Meshmixer',
     'sd_agisoft_metashape'     : 'Agisoft Metashape',
+    'sd_trimble_business'      : 'Trimble Business Center',
+    'sd_trimble_realworks'     : 'Trimble RealWorks',
     'sd_reality_capture'       : 'Reality Capture',
     'sd_context_capture'       : 'Context Capture',
+    'sd_cloudcompare'          : 'CloudCompare',
     'sd_pix4d_capture'         : 'PIX4D Capture',
     'sd_leica_cyclone'         : 'Leica Cyclone',
     'sd_dstretch'              : 'Dstretch',
@@ -117,6 +121,16 @@ SOFTWARE_DATA_MAP = {
     'sd_catia'                 : 'CATIA',
     'sd_qgis'                  : 'QGIS',
     'sd_mysql'                 : 'MySQL',
+    'sd_world_creator_2'       : 'World Creator 2',
+    'sd_mesh_buildup_wizard'   : 'Mesh Buildup Wizard',
+    'sd_riegl_riscan'          : 'Riegl RiScan',
+    'sd_3df_zephyr'            : '3DF Zephyr',
+    'sd_arcmap'                : 'ArcMap',
+    'sd_dynamo'                : 'Dynamo',
+    'sd_geomagic'              : 'Geomagic',
+    'sd_ptgui'                 : 'PTGui',
+    'sd_matlab'                : 'MATLAB',
+    'sd_mongodb'               : 'MongoDB',
 }
 
 SOFTWARE_MODELING_MAP = {
@@ -125,16 +139,18 @@ SOFTWARE_MODELING_MAP = {
     'sm_autodesk_maya'    : 'Autodesk Maya',
     'sm_autodesk_revit'   : 'Autodesk Revit',
     'sm_autodesk_remake'  : 'Autodesk Remake',
+    'sm_archicad'         : 'ArchiCAD',
+    'sm_blender'          : 'Blender',
     'sm_sketchup'         : 'SketchUp',
     'sm_rhinoceros'       : 'Rhinoceros',
-    'sm_blender'          : 'Blender',
-    'sm_archicad'         : 'ArchiCAD',
     'sm_maxon_cinema4d'   : 'Maxon Cinema4D',
     'sm_zbrush'           : 'ZBrush',
     'sm_meshlab'          : 'Meshlab',
     'sm_meshmixer'        : 'Meshmixer',
     'sm_ramsete'          : 'Ramsete',
     'sm_simlab'           : 'SIMLAB',
+    'sm_3dreshaper'       : '3DReshaper',
+    'sm_fuenta_nueva'     : 'Fuente Nueva',
 }
 
 SOFTWARE_RENDER_MAP = {
@@ -157,7 +173,8 @@ SOFTWARE_RENDER_MAP = {
     'sr_shapespark'       : 'Shapespark',
     'sr_fb360_encoder'    : 'FB360 Encoder',
     'sr_kolor_panotour'   : 'Kolor Panotour',
-    'sr_world_creator_2'  : 'World Creator 2',
+    'sr_arkit'            : 'ARKit',
+    'sr_verge3d'          : 'Verge3D',
 }
 
 COLUMNS_METADATA = {

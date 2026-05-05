@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 
-          
+
 def convert_list_csv(header, rows):
     serialized_rows = [[_serialize(cell) for cell in row] for row in rows]
     return pd.DataFrame(serialized_rows, columns=header)
@@ -9,7 +9,7 @@ def convert_list_csv(header, rows):
 
 def save_csv(df, path_output, k=None):
     filename = f"{path_output}_{k}.csv" if k is not None else path_output
-    df.to_csv(filename, index=False, encoding='utf-8')
+    df.to_csv(filename, index=False, encoding="utf-8")
 
 
 def read_csv(path_input, columns_metadata=None):
@@ -18,12 +18,12 @@ def read_csv(path_input, columns_metadata=None):
     if columns_metadata:
         for column, (_, is_list) in columns_metadata.items():
             if is_list and column in df.columns:
-                df[column] = df[column].fillna('[]').apply(_parse)
+                df[column] = df[column].fillna("[]").apply(_parse)
     return df
 
 
 def keep_columns_csv(df, columns_metadata, column_keep):
-    keep = []           
+    keep = []
     for key in column_keep:
         if key in df.columns:
             keep.append(key)
@@ -37,7 +37,7 @@ def keep_columns_csv(df, columns_metadata, column_keep):
     return df[keep]
 
 
-def drop_columns_csv(df, columns_metadata, column_drop):           
+def drop_columns_csv(df, columns_metadata, column_drop):
     drop = []
     for key in column_drop:
         if key in df.columns:
@@ -49,7 +49,7 @@ def drop_columns_csv(df, columns_metadata, column_drop):
                     drop.append(column)
 
     drop = list(dict.fromkeys(drop))
-    return df.drop(columns=drop, errors='ignore')
+    return df.drop(columns=drop)
 
 
 def _serialize(cell):

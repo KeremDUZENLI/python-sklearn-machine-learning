@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
+from sklearn.metrics import davies_bouldin_score
 
 
 def filter_rare_features(df, columns_metadata, min_freq):
@@ -30,10 +31,10 @@ def create_df_binary(df, columns_metadata):
 
 def create_df_cluster(df, elos, k_values, random_state):
     df = _add_column_elo(df, elos)
-    
+
     if isinstance(k_values, int):
         return _add_column_cluster(df, k_values, random_state)
-    
+
     df_clustered = {}
     for k in k_values:
         df_clustered[k] = _add_column_cluster(df, k, random_state)
@@ -53,15 +54,15 @@ def _create_rows_onehot(df, column, mapping, is_list=True):
 def _add_column_elo(df, elos):
     if len(df) != len(elos):
         raise ValueError(f"len(ROWS) {len(df)} != len(ELOS) {len(elos)}")
-    
+
     df = df.copy()
-    df['elo'] = elos
+    df["elo"] = elos
     return df
 
 
 def _add_column_cluster(df, k, random_state):
     km = _get_k_means(k, random_state)
-    km.fit(df[['elo']])
+    km.fit(df[["elo"]])
     labels = km.labels_
 
     centers = km.cluster_centers_.flatten()
@@ -69,7 +70,7 @@ def _add_column_cluster(df, k, random_state):
     remap = {original: new + 1 for new, original in enumerate(order)}
 
     df = df.copy()
-    df['cluster'] = [f"cluster_{remap[label]}" for label in labels]
+    df["cluster"] = [f"cluster_{remap[label]}" for label in labels]
     return df
 
 
@@ -80,17 +81,45 @@ def _get_k_means(k, random_state):
 def plot_k_means(path_output, elos, k_max, random_state):
     X = np.array(elos).reshape(-1, 1)
     k_values = list(range(1, k_max))
-    
+
     inertias = []
     for k in k_values:
         k_mean = _get_k_means(k, random_state).fit(X)
         inertias.append(k_mean.inertia_)
 
     plt.figure(figsize=(8, 4))
-    plt.plot(k_values, inertias, marker='o')
+    plt.plot(k_values, inertias, marker="o")
     plt.xticks(k_values)
-    plt.xlabel('Number of Clusters (k)')
-    plt.ylabel('Inertia')
-    plt.title('Elbow Method for Optimal Number of Clusters')
+    plt.xlabel("Number of Clusters (k)")
+    plt.ylabel("Inertia")
+    plt.title("Elbow Method for Optimal Number of Clusters")
+    plt.tight_layout()
+    plt.savefig(path_output)
+
+
+def plot_k_means_db(path_output, elos, k_max, random_state):
+    X = np.array(elos).reshape(-1, 1)
+    k_values = list(range(2, k_max))
+
+    inertias = []
+    for k in k_values:
+        k_mean = _get_k_means(k, random_state).fit(X)
+        score = davies_bouldin_score(X, k_mean.labels_)
+        inertias.append(score)
+
+    # Find the optimal K (minimum Davies-Bouldin score)
+    optimal_k = k_values[np.argmin(inertias)]
+    print(f"\nOptimal K based on Davies-Bouldin Index: {optimal_k}")
+
+    plt.figure(figsize=(8, 4))
+    plt.plot(k_values, inertias, marker="o", color="red")
+    plt.axvline(
+        x=optimal_k, color="blue", linestyle="--", label=f"Optimal k={optimal_k}"
+    )
+    plt.xticks(k_values)
+    plt.xlabel("Number of Clusters (k)")
+    plt.ylabel("Davies-Bouldin Score (Lower is Better)")
+    plt.title("Davies-Bouldin Index for Optimal Clusters")
+    plt.legend()
     plt.tight_layout()
     plt.savefig(path_output)

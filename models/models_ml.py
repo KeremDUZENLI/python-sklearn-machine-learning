@@ -1,6 +1,3 @@
-from sklearn.pipeline          import Pipeline
-from sklearn.preprocessing     import StandardScaler
-
 from sklearn.naive_bayes       import GaussianNB
 from sklearn.linear_model      import LogisticRegression
 from sklearn.neural_network    import MLPClassifier
@@ -9,12 +6,15 @@ from sklearn.ensemble          import RandomForestClassifier
 from sklearn.svm               import SVC
 from sklearn.neighbors         import KNeighborsClassifier
 
+from sklearn.pipeline          import Pipeline
+from sklearn.preprocessing     import StandardScaler
+
 import time
 
 
 MODELS = [
     ('Naive Bayes (Gaussian)'                  , GaussianNB()),
-    ('Logistic Regression (ridge)'             , LogisticRegression(penalty='l2', solver='lbfgs', max_iter=1000, random_state=42)),
+    ('Logistic Regression (ridge)'             , LogisticRegression(solver='lbfgs', max_iter=1000, random_state=42)),
     ('Deep Neural Network (two hidden layers)' , MLPClassifier(hidden_layer_sizes=(64,32), max_iter=500, random_state=42)),
     ('Decision Tree (CART)'                    , DecisionTreeClassifier(random_state=42)),
     ('Random Forest (100 trees)'               , RandomForestClassifier(n_estimators=100, random_state=42)),

@@ -1,5 +1,9 @@
 data/*
-exports/*
+exports/csv/*
+exports/graphs/*
+exports/new/*
+exports/old_v1/*
+exports/old_v2/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

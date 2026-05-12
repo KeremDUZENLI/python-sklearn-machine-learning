@@ -1,6 +1,6 @@
 data/*
-exports/csv/*
-exports/graphs/*
+exports/dataset_csv/*
+exports/dataset_figures/*
 exports/new/*
 exports/old_v1/*
 exports/old_v2/*

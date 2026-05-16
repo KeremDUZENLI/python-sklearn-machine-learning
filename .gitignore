@@ -2,6 +2,7 @@ data/*
 exports/dataset_csv/*
 exports/dataset_figures/*
 exports/new/*
+exports/new_gen/*
 exports/old_v1/*
 exports/old_v2/*
 

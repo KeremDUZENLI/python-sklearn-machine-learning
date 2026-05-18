@@ -1,11 +1,3 @@
-data/*
-exports/dataset_csv/*
-exports/dataset_figures/*
-exports/new/*
-exports/new_gen/*
-exports/old_v1/*
-exports/old_v2/*
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -151,3 +143,11 @@ cython_debug/
 # Cursor
 .cursorignore
 .cursorindexingignore
+
+# Others
+data/*
+export/dataset_csv/*
+export/dataset_figures/*
+export/new/*
+export/old_v1/*
+export/old_v2/*

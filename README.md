@@ -1,119 +1,104 @@
 # Stochastic Data Mining of VR Heritage Reconstructions via Élő-Based Pairwise Comparisons
 
-A lightweight Python/Scikit‑Learn project to predict perceived realism (“Élő” scores) of VR heritage reconstructions from scene metadata.
+A clean, modular data pipeline designed to extract, cluster, and predict the perceived realism ("Élő" scores) of VR heritage reconstructions using binary software metadata and cross-cohort behavioral comparisons.
 
 ## 🔍 Project Overview
 
-1. **Data preparation**
-   - Convert raw lists into CSV
-   - One‑hot encode metadata (focus, site type, platform, device, techniques, software)
-   - Filter out rare features
-
-2. **Clustering**
-   - Generate elbow plot (`data/K_MEAN.png`)
-   - Assign each scene to one of 3 Élő clusters (low/medium/high)
-
-3. **Feature scoring**
-   - VarianceThreshold + ANOVA F‑test to rank one‑hot flags
-   - Aggregate scores by feature group (device, platform, etc.)
-
-4. **Supervised learning**
-   - Split into train/test (stratified by cluster)
-   - Train & evaluate 7 classifiers (GaussianNB, LogisticRegression, DecisionTree, RandomForest, SVM(RBF), k‑NN, MLP)
-   - Report accuracy & wall‑clock time
+1. **Database & Data Extraction (`main_dataset.ipynb`)**
+   - Containerized PostgreSQL environments for two separate study cohorts.
+   - Extracts user demographics, match win-rates, and cross-cohort Élő volatility.
+2. **Data Preparation**
+   - Tokenizes and one-hot encodes metadata (focus, site type, platform, device, techniques, software).
+   - Dynamically filters out rare features via sparsity distribution analysis.
+3. **Clustering**
+   - Computes optimal perceptual tiers ($k=4$) using the Elbow Method and Davies-Bouldin Index.
+   - Maps continuous Élő scores into distinct Realism Clusters.
+4. **Supervised Learning (`main_old_v2.ipynb` & `main_new.ipynb`)**
+   - Evaluates feature significance via ANOVA F-tests.
+   - Employs Stratified 5-Fold Cross-Validation across 7 classifiers (GaussianNB, LogisticRegression, DecisionTree, RandomForest, SVM(RBF), k-NN, MLP).
 
 ## 📁 Repository Structure
 
-```
+```text
 └── python-sklearn-machine-learning
     ├── data
-    │   ├── source
-    │   │   ├──
-    │   ├──
-    ├── models
-    │   ├── models_ml.py
-    │   └── scores_feat.py
-    ├── schema
-    │   └── config.py
-    ├── tests
-    │   └── verifier.py
-    ├── tools
-    │   ├── tools_csv.py
-    │   ├── tools_df.py
-    │   └── tools_print.py
+    │   ├── db_new/               # PostgreSQL dumps for Student cohort
+    │   ├── db_old/               # PostgreSQL dumps for General cohort
+    │   ├── dataset_new.csv
+    │   ├── dataset_old_v1.csv
+    │   ├── dataset_old_v2.csv    # Mapped to match new dataset IDs
+    │   └── map.json
+    ├── exports
+    │   ├── dataset_csv/          # Extracted demographics, win-rates, master datasets
+    │   └── dataset_figures/      # Academic plots (Sparsity, K-Means, Scatter)
+    ├── docker-compose.yml        # PostgreSQL database orchestration
+    ├── main_dataset.ipynb        # DB Connection, EDA, and Visualization
+    ├── main_new.ipynb            # ML Pipeline for Student Cohort
+    ├── main_old_v1.ipynb         # Legacy Pipeline
+    ├── main_old_v2.ipynb         # ML Pipeline for General Cohort
+    ├── requirements.txt
     ├── .gitignore
     ├── LICENSE
-    ├── main.py
-    ├── .gitignore
-    ├── LICENSE
-    ├── main.py
     └── README.md
 ```
 
 ## ⚙️ Getting Started
 
-1. **Create the virtual environment using Python 3.13.5**
+1. **Initialize the Databases (Docker)**
 
-   ```bash
-   py -3.13 -m venv .env
-   ```
+```bash
+docker-compose build --no-cache
+docker-compose up
+```
 
-2. **Activate the environment**
+```bash
+postgres_test > Create > Database
+> Database name      : dataset_old_v1
 
-   ```bash
-   .\.env\Scripts\activate
-   ```
+dataset_old_v1 > Tools > Restore
+> Backup file        : dump-postgres_...
+> Extra command args : --clean
+```
 
-3. **Update pip**
+_Do the same for others_
 
-   ```bash
-   python -m pip install --upgrade pip
-   ```
+2. **Create the virtual environment (Python 3.13.5)**
 
-4. **Update setuptools**
+```bash
+py -3.13 -m venv .env
+```
 
-   ```bash
-   pip install --upgrade setuptools
-   ```
+```bash
+.\.env\Scripts\activate
+```
 
-5. **Install dependencies**
+3. **Install dependencies**
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+python -m pip install --upgrade pip setuptools
+```
 
-## 📝 Jupyter Notebook
+```bash
+pip install -r requirements.txt
+```
 
-1. **Register Python Environment**
+4. **Launch Jupyter**
 
-   ```bash
-   python -m ipykernel install --user --name=env_python_sklearn --display-name "Python 3.13.5 (sklearn)"
-   ```
+```bash
+python -m ipykernel install --user --name=env_python_sklearn --display-name "Python 3.13.5 (sklearn)"
+```
 
-2. **Launch Jupyter**
+```bash
+jupyter lab
+```
 
-   ```bash
-   jupyter lab
-   ```
-
-3. **Change Kernel**
-
-   ```bash
-   Change kernel in Jupyterlab (Select after choosing the .ipynb file) =
-   Kernel → Change Kernel →
-   ```
-
-- Generates CSVs, prints summaries
-- Saves `data/K_MEAN.png`
-- Trains models and prints results
-
----
+_Ensure you select `Python 3.13.5 (sklearn)` as your kernel in JupyterLab._
 
 ## 📊 Key Findings
 
-- **Elbow plot**: $K=3$ clusters
-- **Top ANOVA features**: `device_hmd`, `platform_ar`, `sr_unity`, …
-- **Best classifier**: SVM (RBF) — \~47 % accuracy
+- **Perceptual Tiers:** Both the Elbow method and Davies-Bouldin Index confirm exactly $K=4$ distinct realism clusters.
+- **Demographic Volatility:** The Gen Z Student cohort demonstrated significantly wider Élő variance (1198 to 1908) compared to the General Public (1210 to 1799), mathematically proving digital-natives are harsher visual critics.
+- **The Machine Learning Ceiling:** Stratified Cross-Validation reveals a predictive accuracy ceiling of **~32%** (SVM RBF), proving that visual realism is driven by artist execution and optimization, not binary software flags.
 
 ## LICENCE
 

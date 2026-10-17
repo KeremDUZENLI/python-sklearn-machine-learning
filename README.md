@@ -65,11 +65,11 @@ _Do the same for others_
 2. **Create the virtual environment (Python 3.13.5)**
 
 ```bash
-py -3.13 -m venv .env
+py -3.13 -m venv myEnv
 ```
 
 ```bash
-.\.env\Scripts\activate
+.\myEnv\Scripts\activate
 ```
 
 3. **Install dependencies**
